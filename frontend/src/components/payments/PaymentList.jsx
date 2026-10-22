@@ -21,6 +21,7 @@ import { PaymentStatusBadge, PaymentModeBadge } from "./PaymentStatusBadge";
 import AddPaymentModal from "./AddPaymentModal";
 import MapPaymentModal from "./MapPaymentModal";
 import UnmatchedPaymentModal from "./UnmatchedPaymentModal";
+import RecordSupplierPaymentModal from "./RecordSupplierPaymentModal";
 
 export default function PaymentList({
   token,
@@ -28,7 +29,8 @@ export default function PaymentList({
   onSelectPayment,
   onOpenAddPayment,
   initialModeFilter = "ALL",
-  initialStatusFilter = "ALL"
+  initialStatusFilter = "ALL",
+  initialPaymentType = "ALL"
 }) {
   const [payments, setPayments] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -39,6 +41,7 @@ export default function PaymentList({
   const [search, setSearch] = useState("");
   const [paymentMode, setPaymentMode] = useState(initialModeFilter);
   const [status, setStatus] = useState(initialStatusFilter);
+  const [paymentType, setPaymentType] = useState(initialPaymentType);
   const [page, setPage] = useState(1);
   const [limit] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
@@ -46,6 +49,7 @@ export default function PaymentList({
 
   // Active Modals
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showSupplierPaymentModal, setShowSupplierPaymentModal] = useState(false);
   const [mappingPayment, setMappingPayment] = useState(null);
   const [identifyingPayment, setIdentifyingPayment] = useState(null);
   const [cancellingPayment, setCancellingPayment] = useState(null);
@@ -76,7 +80,8 @@ export default function PaymentList({
         limit,
         search: search.trim(),
         paymentMode,
-        status
+        status,
+        paymentType
       });
 
       const response = await fetch(`http://localhost:5005/api/payments?${queryParams.toString()}`, {
@@ -131,7 +136,7 @@ export default function PaymentList({
     }, 300);
 
     return () => clearTimeout(timer);
-  }, [search, paymentMode, status, page]);
+  }, [search, paymentMode, status, paymentType, page]);
 
   const showToast = (msg) => {
     setToastMessage(msg);
@@ -218,19 +223,42 @@ export default function PaymentList({
         </div>
 
         {canRecordPayment && (
-          <button
-            onClick={() => setShowAddModal(true)}
-            className="btn-primary"
-            style={{
-              padding: "10px 22px",
-              background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
-              fontSize: "0.88rem",
-              gap: "8px"
-            }}
-          >
-            <Plus size={16} />
-            <span>Record Collection</span>
-          </button>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <button
+              onClick={() => setShowSupplierPaymentModal(true)}
+              className="btn-secondary"
+              style={{
+                padding: "10px 18px",
+                borderColor: "rgba(239, 68, 68, 0.35)",
+                color: "#ef4444",
+                background: "rgba(239, 68, 68, 0.08)",
+                fontSize: "0.88rem",
+                display: "flex",
+                alignItems: "center",
+                gap: "8px"
+              }}
+              title="Record Supplier Payment Voucher (F5)"
+            >
+              <CreditCard size={16} />
+              <span>Pay Supplier (F5)</span>
+            </button>
+
+            <button
+              onClick={() => setShowAddModal(true)}
+              className="btn-primary"
+              style={{
+                padding: "10px 22px",
+                background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
+                fontSize: "0.88rem",
+                display: "flex",
+                alignItems: "center",
+                gap: "8px"
+              }}
+            >
+              <Plus size={16} />
+              <span>Record Collection (F6)</span>
+            </button>
+          </div>
         )}
       </div>
 
@@ -431,27 +459,19 @@ export default function PaymentList({
             )}
           </div>
         ) : (
-          <div style={{ overflowX: "auto" }}>
-            <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: "0.85rem" }}>
+          <div className="erp-table-container">
+            <table className="erp-table" style={{ minWidth: "1150px" }}>
               <thead>
-                <tr style={{
-                  background: "var(--table-header-bg)",
-                  borderBottom: "1px solid var(--border-color)",
-                  color: "var(--text-muted)",
-                  fontSize: "0.75rem",
-                  fontWeight: "700",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.03em"
-                }}>
-                  <th style={{ padding: "14px 18px" }}>Payment #</th>
-                  <th style={{ padding: "14px 18px" }}>Date & Time</th>
-                  <th style={{ padding: "14px 18px" }}>Customer / Outlet</th>
-                  <th style={{ padding: "14px 18px" }}>Mode & Details</th>
-                  <th style={{ padding: "14px 18px", textAlign: "right" }}>Amount</th>
-                  <th style={{ padding: "14px 18px", textAlign: "right" }}>Mapped / Balance</th>
-                  <th style={{ padding: "14px 18px", textAlign: "center" }}>Status</th>
-                  <th style={{ padding: "14px 18px" }}>Collected By</th>
-                  <th style={{ padding: "14px 18px", textAlign: "center" }}>Actions</th>
+                <tr>
+                  <th style={{ width: "140px", padding: "12px 14px" }}>Payment #</th>
+                  <th style={{ width: "110px", padding: "12px 14px" }}>Date & Time</th>
+                  <th style={{ minWidth: "200px", padding: "12px 14px" }}>Customer / Outlet</th>
+                  <th style={{ width: "150px", padding: "12px 14px" }}>Mode & Details</th>
+                  <th style={{ width: "120px", padding: "12px 14px", textAlign: "right" }}>Amount</th>
+                  <th style={{ width: "130px", padding: "12px 14px", textAlign: "right" }}>Mapped / Balance</th>
+                  <th style={{ width: "120px", padding: "12px 14px", textAlign: "center" }}>Status</th>
+                  <th style={{ width: "150px", padding: "12px 14px" }}>Collected By</th>
+                  <th style={{ width: "130px", padding: "12px 14px", textAlign: "center" }}>Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -474,12 +494,12 @@ export default function PaymentList({
                       onMouseLeave={(e) => e.currentTarget.style.background = idx % 2 === 0 ? "var(--bg-card)" : "var(--table-row-even)"}
                     >
                       {/* Payment Number */}
-                      <td style={{ padding: "14px 18px", fontFamily: "monospace", fontWeight: "800", color: "var(--text-main)" }}>
+                      <td style={{ padding: "11px 14px", fontFamily: "var(--font-mono)", fontWeight: "700", color: "var(--text-main)", whiteSpace: "nowrap" }}>
                         {p.paymentNumber}
                       </td>
 
                       {/* Date */}
-                      <td style={{ padding: "14px 18px", color: "var(--text-muted)", fontSize: "0.82rem", whiteSpace: "nowrap" }}>
+                      <td style={{ padding: "11px 14px", color: "var(--text-muted)", fontSize: "0.82rem", whiteSpace: "nowrap" }}>
                         {p.paymentDate ? new Date(p.paymentDate).toLocaleDateString("en-IN", {
                           day: "2-digit",
                           month: "short",
@@ -487,9 +507,19 @@ export default function PaymentList({
                         }) : "-"}
                       </td>
 
-                      {/* Customer */}
-                      <td style={{ padding: "14px 18px" }}>
-                        {isUnmatched ? (
+                      {/* Customer / Supplier Party */}
+                      <td style={{ padding: "11px 14px" }}>
+                        {p.paymentType === "SUPPLIER_PAYMENT" ? (
+                          <div>
+                            <div style={{ fontWeight: "800", color: "#dc2626", fontSize: "0.88rem", display: "flex", alignItems: "center", gap: "6px" }}>
+                              <Building2 size={14} color="#dc2626" />
+                              <span>{p.supplierName || "Supplier"}</span>
+                            </div>
+                            <div style={{ fontSize: "0.72rem", color: "var(--text-dim)", marginTop: "2px" }}>
+                              Creditor Payment (F5) • Ref: {p.referenceNumber || "Direct"}
+                            </div>
+                          </div>
+                        ) : isUnmatched ? (
                           <div style={{
                             display: "inline-flex",
                             alignItems: "center",
@@ -508,18 +538,18 @@ export default function PaymentList({
                         ) : (
                           <div>
                             <div style={{ fontWeight: "800", color: "var(--text-main)", fontSize: "0.88rem" }}>
-                              {p.customer?.storeName || p.customer?.name || "Customer"}
+                              {p.customer?.storeName || p.customer?.name || p.customerName || "Customer"}
                             </div>
                             <div style={{ fontSize: "0.75rem", color: "var(--text-dim)", marginTop: "2px" }}>
                               {p.customer?.ownerName ? `${p.customer.ownerName} • ` : ""}
-                              {p.customer?.code || ""}
+                              {p.customer?.code || p.customerCode || ""}
                             </div>
                           </div>
                         )}
                       </td>
 
                       {/* Mode & Details */}
-                      <td style={{ padding: "14px 18px" }}>
+                      <td style={{ padding: "11px 14px" }}>
                         <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
                           <PaymentModeBadge mode={p.paymentMode} />
                           {p.paymentMode === "UPI" && (
@@ -538,35 +568,35 @@ export default function PaymentList({
                       </td>
 
                       {/* Total Amount */}
-                      <td style={{ padding: "14px 18px", textAlign: "right", fontFamily: "monospace", fontWeight: "900", color: "var(--text-main)", fontSize: "0.95rem" }}>
+                      <td style={{ padding: "11px 14px", textAlign: "right", fontFamily: "var(--font-mono)", fontWeight: "700", color: "var(--text-main)", fontSize: "0.92rem", whiteSpace: "nowrap" }}>
                         ₹{(p.amount || 0).toLocaleString("en-IN")}
                       </td>
 
                       {/* Mapped vs Balance */}
-                      <td style={{ padding: "14px 18px", textAlign: "right", fontSize: "0.82rem", fontFamily: "monospace" }}>
+                      <td style={{ padding: "11px 14px", textAlign: "right", fontSize: "0.82rem", fontFamily: "var(--font-mono)", whiteSpace: "nowrap" }}>
                         <div style={{ color: "#059669", fontWeight: "700" }}>
                           ₹{(p.mappedAmount || 0).toLocaleString("en-IN")}
                         </div>
-                        <div style={{ color: "var(--text-muted)", fontSize: "0.75rem" }}>
+                        <div style={{ color: "var(--text-muted)", fontSize: "0.74rem" }}>
                           Bal: ₹{(p.unmappedAmount || 0).toLocaleString("en-IN")}
                         </div>
                       </td>
 
                       {/* Status */}
-                      <td style={{ padding: "14px 18px", textAlign: "center" }}>
+                      <td style={{ padding: "11px 14px", textAlign: "center", whiteSpace: "nowrap" }}>
                         <PaymentStatusBadge status={p.status} />
                       </td>
 
                       {/* Collected By */}
-                      <td style={{ padding: "14px 18px", fontSize: "0.82rem", color: "var(--text-muted)" }}>
+                      <td style={{ padding: "11px 14px", fontSize: "0.82rem", color: "var(--text-muted)", whiteSpace: "nowrap" }}>
                         <div style={{ fontWeight: "600", color: "var(--text-main)" }}>{p.salesman?.name || p.collectedBy?.name || "Distributor Desk"}</div>
                         {p.salesman?.code && (
-                          <div style={{ fontSize: "0.72rem", color: "var(--text-dim)", fontFamily: "monospace" }}>{p.salesman.code}</div>
+                          <div style={{ fontSize: "0.72rem", color: "var(--text-dim)", fontFamily: "var(--font-mono)" }}>{p.salesman.code}</div>
                         )}
                       </td>
 
                       {/* Actions */}
-                      <td style={{ padding: "14px 18px", textAlign: "center" }} onClick={(e) => e.stopPropagation()}>
+                      <td style={{ padding: "11px 14px", textAlign: "center", whiteSpace: "nowrap" }} onClick={(e) => e.stopPropagation()}>
                         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "6px" }}>
                           {/* View Voucher */}
                           <button
@@ -885,6 +915,19 @@ export default function PaymentList({
             </div>
           </div>
         </div>
+      )}
+
+      {/* Supplier Payment Voucher Modal (F5) */}
+      {showSupplierPaymentModal && (
+        <RecordSupplierPaymentModal
+          token={token}
+          onClose={() => setShowSupplierPaymentModal(false)}
+          onSuccess={(msg) => {
+            setToastMessage(msg);
+            setTimeout(() => setToastMessage(""), 4000);
+            fetchPayments();
+          }}
+        />
       )}
     </div>
   );

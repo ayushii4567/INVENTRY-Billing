@@ -41,6 +41,27 @@ const paymentSchema = new mongoose.Schema(
       index: true
     },
 
+    // Voucher / Payment Type: CUSTOMER_RECEIPT (F6) or SUPPLIER_PAYMENT (F5)
+    paymentType: {
+      type: String,
+      enum: ["CUSTOMER_RECEIPT", "SUPPLIER_PAYMENT"],
+      default: "CUSTOMER_RECEIPT",
+      index: true
+    },
+
+    // Supplier reference (for SUPPLIER_PAYMENT F5 vouchers)
+    supplierId: {
+      type: String,
+      default: null,
+      trim: true,
+      index: true
+    },
+    supplierName: {
+      type: String,
+      default: null,
+      trim: true
+    },
+
     // Customer reference (Optional if payment is UNMATCHED UPI)
     customerId: {
       type: String,
@@ -83,13 +104,13 @@ const paymentSchema = new mongoose.Schema(
     },
     companyName: {
       type: String,
-      default: "Chirag Combines FMCG"
+      default: "Distributor ERP"
     },
 
     paymentMode: {
       type: String,
       required: [true, "Payment mode is required"],
-      enum: ["CASH", "UPI", "CHEQUE"],
+      enum: ["CASH", "UPI", "CHEQUE", "BANK_TRANSFER", "NEFT", "RTGS", "OTHER"],
       index: true
     },
 
@@ -136,7 +157,7 @@ const paymentSchema = new mongoose.Schema(
 
     status: {
       type: String,
-      enum: ["RECORDED", "MAPPED", "PARTIALLY_MAPPED", "UNMATCHED", "CANCELLED"],
+      enum: ["RECORDED", "MAPPED", "PARTIALLY_MAPPED", "UNMATCHED", "CANCELLED", "CONFIRMED"],
       default: "RECORDED",
       index: true
     },

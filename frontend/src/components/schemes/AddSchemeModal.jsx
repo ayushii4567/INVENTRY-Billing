@@ -5,7 +5,7 @@ export default function AddSchemeModal({ isOpen, onClose, onSchemeCreated, token
   const [formData, setFormData] = useState({
     schemeName: "",
     schemeType: "PERCENTAGE_DISCOUNT",
-    targetBrand: "Nestlé",
+    targetBrand: "Finished Goods",
     applicableCategory: "All Categories",
     minQuantity: 1,
     freeQuantity: 0,
@@ -205,7 +205,7 @@ export default function AddSchemeModal({ isOpen, onClose, onSchemeCreated, token
 
             <div>
               <label style={{ display: "block", fontSize: "0.82rem", fontWeight: 600, color: "#334155", marginBottom: "5px" }}>
-                Target Brand
+                Target Stock Group
               </label>
               <select
                 value={formData.targetBrand}
@@ -221,13 +221,12 @@ export default function AddSchemeModal({ isOpen, onClose, onSchemeCreated, token
                   outline: "none"
                 }}
               >
-                <option value="All Brands">All Brands</option>
-                <option value="Nestlé">Nestlé</option>
-                <option value="Parle">Parle</option>
-                <option value="Patanjali">Patanjali</option>
-                <option value="Amul">Amul</option>
-                <option value="Fortune">Fortune</option>
-                <option value="GSK Consumer">GSK Consumer</option>
+                <option value="All Groups">All Groups</option>
+                <option value="Finished Goods">Finished Goods</option>
+                <option value="Trading Goods">Trading Goods</option>
+                <option value="Raw Materials">Raw Materials</option>
+                <option value="Consumables">Consumables</option>
+                <option value="General Goods">General Goods</option>
               </select>
             </div>
           </div>

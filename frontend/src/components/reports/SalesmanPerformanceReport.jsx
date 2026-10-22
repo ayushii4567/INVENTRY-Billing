@@ -110,56 +110,50 @@ export default function SalesmanPerformanceReport({ data }) {
       )}
 
       {/* Top 5 Salesmen Table */}
-      <div style={{ overflowX: "auto" }}>
-        <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: "0.82rem" }}>
+      <div className="erp-table-container">
+        <table className="erp-table" style={{ minWidth: "900px" }}>
           <thead>
-            <tr style={{ borderBottom: "1px solid var(--border-card)", color: "var(--text-muted)" }}>
-              <th style={{ padding: "10px 12px", fontWeight: "700" }}>Rank</th>
-              <th style={{ padding: "10px 12px", fontWeight: "700" }}>Salesman</th>
-              <th style={{ padding: "10px 12px", fontWeight: "700" }}>Assigned Route</th>
-              <th style={{ padding: "10px 12px", fontWeight: "700" }}>Outlets</th>
-              <th style={{ padding: "10px 12px", fontWeight: "700" }}>Orders</th>
-              <th style={{ padding: "10px 12px", fontWeight: "700" }}>Gross Sales</th>
-              <th style={{ padding: "10px 12px", fontWeight: "700" }}>Collection</th>
-              <th style={{ padding: "10px 12px", fontWeight: "700" }}>Target Achieved</th>
+            <tr>
+              <th style={{ minWidth: "60px" }}>Rank</th>
+              <th style={{ minWidth: "180px" }}>Salesman</th>
+              <th style={{ minWidth: "150px" }}>Assigned Route</th>
+              <th style={{ minWidth: "80px", textAlign: "center" }}>Outlets</th>
+              <th style={{ minWidth: "80px", textAlign: "center" }}>Orders</th>
+              <th style={{ minWidth: "130px", textAlign: "right" }}>Gross Sales</th>
+              <th style={{ minWidth: "130px", textAlign: "right" }}>Collection</th>
+              <th style={{ minWidth: "120px", textAlign: "center" }}>Target Achieved</th>
             </tr>
           </thead>
           <tbody>
             {salesmen.map((s) => (
-              <tr
-                key={s.rank}
-                style={{
-                  borderBottom: "1px solid var(--border-card)",
-                  transition: "background 0.15s ease"
-                }}
-              >
-                <td style={{ padding: "12px", fontWeight: "800", color: "var(--text-muted)" }}>
+              <tr key={s.rank}>
+                <td style={{ padding: "11px 14px", fontWeight: "800", color: "var(--text-muted)", whiteSpace: "nowrap" }}>
                   #{s.rank}
                 </td>
-                <td style={{ padding: "12px" }}>
-                  <div style={{ fontWeight: "700", color: "var(--text-main)" }}>{s.name}</div>
-                  <div style={{ fontSize: "0.72rem", color: "var(--text-muted)" }}>{s.employeeCode}</div>
+                <td style={{ padding: "11px 14px" }}>
+                  <div style={{ fontWeight: "700", color: "var(--text-main)", whiteSpace: "nowrap" }}>{s.name}</div>
+                  <div style={{ fontSize: "0.72rem", color: "var(--text-muted)", whiteSpace: "nowrap", fontFamily: "var(--font-mono, monospace)" }}>{s.employeeCode}</div>
                 </td>
-                <td style={{ padding: "12px", color: "var(--text-muted)", fontWeight: "500" }}>
+                <td style={{ padding: "11px 14px", color: "var(--text-muted)", fontWeight: "500", whiteSpace: "nowrap" }}>
                   {s.route}
                 </td>
-                <td style={{ padding: "12px", color: "var(--text-main)", fontWeight: "600" }}>
+                <td style={{ padding: "11px 14px", color: "var(--text-main)", fontWeight: "600", textAlign: "center", whiteSpace: "nowrap" }}>
                   {s.assignedCustomers}
                 </td>
-                <td style={{ padding: "12px", color: "var(--text-main)", fontWeight: "600" }}>
+                <td style={{ padding: "11px 14px", color: "var(--text-main)", fontWeight: "600", textAlign: "center", whiteSpace: "nowrap" }}>
                   {s.orders}
                 </td>
-                <td style={{ padding: "12px", fontWeight: "800", color: "var(--text-main)" }}>
+                <td style={{ padding: "11px 14px", fontWeight: "800", color: "var(--text-main)", textAlign: "right", whiteSpace: "nowrap", fontVariantNumeric: "tabular-nums" }}>
                   {formatCurrency(s.sales)}
                 </td>
-                <td style={{ padding: "12px", fontWeight: "800", color: "#10b981" }}>
+                <td style={{ padding: "11px 14px", fontWeight: "800", color: "#10b981", textAlign: "right", whiteSpace: "nowrap", fontVariantNumeric: "tabular-nums" }}>
                   {formatCurrency(s.collection)}
                 </td>
-                <td style={{ padding: "12px" }}>
+                <td style={{ padding: "11px 14px", textAlign: "center", whiteSpace: "nowrap" }}>
                   <span style={{
                     background: s.targetAchieved >= 90 ? "rgba(16, 185, 129, 0.15)" : "rgba(99, 102, 241, 0.15)",
                     color: s.targetAchieved >= 90 ? "#10b981" : "#818cf8",
-                    padding: "4px 10px",
+                    padding: "3px 8px",
                     borderRadius: "8px",
                     fontWeight: "800",
                     fontSize: "0.75rem"

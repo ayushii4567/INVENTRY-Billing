@@ -1,8 +1,22 @@
-// Operational Customers Repository (Clean Production Foundation)
+// Operational Customers Repository with MongoDB Atlas + In-Memory Fallback
+import Customer from "../../models/Customer.js";
+import { isDatabaseConnected } from "../../config/database.js";
+
 let initialCustomers = [];
 let customerCounter = 1;
 
-export const generateCustomerCode = () => {
+export const generateCustomerCode = async () => {
+  if (isDatabaseConnected()) {
+    try {
+      const latest = await Customer.findOne().sort({ createdAt: -1 }).lean();
+      if (latest && latest.customerCode) {
+        const num = parseInt(latest.customerCode.replace(/[^0-9]/g, ""), 10);
+        if (!isNaN(num)) {
+          return `CUS-${String(num + 1).padStart(6, "0")}`;
+        }
+      }
+    } catch (e) {}
+  }
   const code = `CUS-${String(customerCounter).padStart(6, "0")}`;
   customerCounter++;
   return code;
@@ -21,9 +35,55 @@ export const findCustomers = async ({
   scopedSalesmanId = null,
   unassignedOnly = false
 }) => {
+  if (isDatabaseConnected()) {
+    try {
+      const filter = {};
+      if (status && status !== "ALL") filter.status = status;
+      if (routeId && routeId !== "ALL") filter.routeId = routeId;
+      if (areaId && areaId !== "ALL") filter.areaId = areaId;
+      if (scopedSalesmanId) {
+        filter.$or = [{ salesmanId: scopedSalesmanId }, { salesmanName: "Rahul Kumar" }];
+      } else if (salesmanId && salesmanId !== "ALL") {
+        filter.salesmanId = salesmanId;
+      }
+
+      if (search && search.trim()) {
+        const regex = new RegExp(search.trim(), "i");
+        filter.$or = [
+          { shopName: regex },
+          { ownerName: regex },
+          { customerCode: regex },
+          { mobile: regex }
+        ];
+      }
+
+      const skip = (Math.max(1, parseInt(page, 10)) - 1) * parseInt(limit, 10);
+      const [list, total] = await Promise.all([
+        Customer.find(filter)
+          .sort({ [sortBy]: sortOrder === "asc" ? 1 : -1 })
+          .skip(skip)
+          .limit(parseInt(limit, 10))
+          .lean(),
+        Customer.countDocuments(filter)
+      ]);
+
+      if (list && list.length > 0) {
+        return {
+          data: list.map((c) => ({ ...c, id: c._id.toString() })),
+          page: parseInt(page, 10),
+          limit: parseInt(limit, 10),
+          total,
+          totalPages: Math.ceil(total / parseInt(limit, 10)) || 1
+        };
+      }
+    } catch (e) {
+      console.warn("MongoDB Customer query failed, falling back to memory:", e.message);
+    }
+  }
+
+  // In-Memory Fallback
   let list = [...initialCustomers];
 
-  // 1. Data Scope Enforcement (Salesman can ONLY see assigned outlets!)
   if (scopedSalesmanId) {
     list = list.filter((c) => 
       c.salesmanId === scopedSalesmanId || 
@@ -40,7 +100,6 @@ export const findCustomers = async ({
     }
   }
 
-  // 2. Search Filter (shopName, ownerName, mobile, customerCode)
   if (search && search.trim()) {
     const q = search.trim().toLowerCase();
     list = list.filter(
@@ -52,33 +111,25 @@ export const findCustomers = async ({
     );
   }
 
-  // 3. Status Filter
   if (status && status !== "ALL") {
     list = list.filter((c) => c.status === status);
   }
-
-  // 4. Route Filter
   if (routeId && routeId !== "ALL") {
     list = list.filter((c) => c.routeId === routeId);
   }
-
-  // 5. Area Filter
   if (areaId && areaId !== "ALL") {
     list = list.filter((c) => c.areaId === areaId);
   }
 
-  // 6. Sorting
   list.sort((a, b) => {
     let valA = a[sortBy] || "";
     let valB = b[sortBy] || "";
     if (typeof valA === "string") valA = valA.toLowerCase();
     if (typeof valB === "string") valB = valB.toLowerCase();
-
     if (sortOrder === "asc") return valA > valB ? 1 : -1;
     return valA < valB ? 1 : -1;
   });
 
-  // 7. Pagination
   const total = list.length;
   const pageNum = Math.max(1, parseInt(page, 10));
   const limitNum = Math.min(100, Math.max(1, parseInt(limit, 10)));
@@ -96,20 +147,36 @@ export const findCustomers = async ({
 };
 
 export const findCustomerById = async (id) => {
+  if (isDatabaseConnected()) {
+    try {
+      const c = await Customer.findOne({
+        $or: [
+          { _id: id.match(/^[0-9a-fA-F]{24}$/) ? id : null },
+          { id },
+          { customerCode: id }
+        ]
+      }).lean();
+      if (c) return { ...c, id: c._id.toString() };
+    } catch (e) {}
+  }
   return initialCustomers.find((c) => c.id === id || c.customerCode === id) || null;
 };
 
 export const findCustomerByMobile = async (mobile) => {
+  if (isDatabaseConnected()) {
+    try {
+      const c = await Customer.findOne({ mobile: mobile.trim() }).lean();
+      if (c) return { ...c, id: c._id.toString() };
+    } catch (e) {}
+  }
   return initialCustomers.find((c) => c.mobile === mobile.trim()) || null;
 };
 
 export const createCustomerRecord = async (customerData) => {
-  const newId = customerData.id || `cus-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
-  const code = generateCustomerCode();
+  const code = customerData.customerCode || await generateCustomerCode();
   const now = new Date().toISOString();
 
-  const newCustomer = {
-    id: newId,
+  const newCustomerData = {
     customerCode: code,
     shopName: customerData.shopName.trim(),
     ownerName: (customerData.ownerName || "").trim(),
@@ -130,16 +197,44 @@ export const createCustomerRecord = async (customerData) => {
     statusReason: customerData.statusReason || "",
     notes: (customerData.notes || "").trim(),
     createdBy: customerData.createdBy || "system",
-    updatedBy: customerData.updatedBy || "system",
+    updatedBy: customerData.updatedBy || "system"
+  };
+
+  if (isDatabaseConnected()) {
+    try {
+      const saved = await Customer.create(newCustomerData);
+      return { ...saved.toObject(), id: saved._id.toString() };
+    } catch (e) {
+      if (e.code === 11000) {
+        const existing = await Customer.findOne({ $or: [{ customerCode: newCustomerData.customerCode }, { shopName: newCustomerData.shopName }] }).lean();
+        if (existing) return { ...existing, id: existing._id.toString() };
+      }
+      console.warn("MongoDB Customer create failed, saving to memory:", e.message);
+    }
+  }
+
+  const memoryCustomer = {
+    id: customerData.id || `cus-${Date.now()}-${Math.floor(Math.random() * 10000)}`,
+    ...newCustomerData,
     createdAt: now,
     updatedAt: now
   };
-
-  initialCustomers.unshift(newCustomer);
-  return newCustomer;
+  initialCustomers.unshift(memoryCustomer);
+  return memoryCustomer;
 };
 
 export const updateCustomerRecord = async (id, updateData) => {
+  if (isDatabaseConnected()) {
+    try {
+      const updated = await Customer.findOneAndUpdate(
+        { $or: [{ _id: id.match(/^[0-9a-fA-F]{24}$/) ? id : null }, { id }, { customerCode: id }] },
+        { ...updateData, updatedAt: new Date() },
+        { new: true }
+      ).lean();
+      if (updated) return { ...updated, id: updated._id.toString() };
+    } catch (e) {}
+  }
+
   const index = initialCustomers.findIndex((c) => c.id === id || c.customerCode === id);
   if (index === -1) return null;
 
@@ -161,6 +256,17 @@ export const updateCustomerRecord = async (id, updateData) => {
 };
 
 export const updateCustomerStatusRecord = async (id, status, statusReason = "", updatedBy = "system") => {
+  if (isDatabaseConnected()) {
+    try {
+      const updated = await Customer.findOneAndUpdate(
+        { $or: [{ _id: id.match(/^[0-9a-fA-F]{24}$/) ? id : null }, { id }, { customerCode: id }] },
+        { status, statusReason, updatedBy, updatedAt: new Date() },
+        { new: true }
+      ).lean();
+      if (updated) return { ...updated, id: updated._id.toString() };
+    } catch (e) {}
+  }
+
   const index = initialCustomers.findIndex((c) => c.id === id || c.customerCode === id);
   if (index === -1) return null;
 

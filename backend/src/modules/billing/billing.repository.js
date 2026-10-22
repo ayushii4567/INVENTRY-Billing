@@ -54,7 +54,10 @@ export const findBills = async ({
       ];
     }
     if (customerId) {
-      filter["customer.customerId"] = customerId;
+      filter.$or = [
+        { "customer.customerId": customerId },
+        { "customer.customerCode": customerId }
+      ];
     }
     if (search && search.trim()) {
       const regex = new RegExp(search.trim(), "i");
@@ -100,7 +103,9 @@ export const findBills = async ({
     );
   }
   if (customerId) {
-    filtered = filtered.filter((b) => b.customer?.customerId === customerId);
+    filtered = filtered.filter(
+      (b) => b.customer?.customerId === customerId || b.customer?.customerCode === customerId || b.customer?.id === customerId
+    );
   }
   if (search && search.trim()) {
     const q = search.trim().toLowerCase();
@@ -296,6 +301,48 @@ export const applyPaymentToBill = async (billId, allocatedAmount, user) => {
     const newPaid = round2(Number(b.paidAmount || 0) + numAllocated);
     const newOutstanding = round2(Math.max(0, Number(b.totalAmount || 0) - newPaid));
     const newPaymentStatus = newPaid >= Number(b.totalAmount || 0) ? "PAID" : newPaid > 0 ? "PARTIAL" : "UNPAID";
+
+    inMemoryBills[idx] = {
+      ...b,
+      paidAmount: newPaid,
+      outstandingAmount: newOutstanding,
+      balanceAmount: newOutstanding,
+      paymentStatus: newPaymentStatus,
+      updatedBy: user?.name || "System",
+      updatedAt: new Date().toISOString()
+    };
+    return inMemoryBills[idx];
+  }
+
+  return null;
+};
+
+export const revertPaymentFromBill = async (billId, allocatedAmount, user) => {
+  const numAllocated = round2(allocatedAmount);
+  if (numAllocated <= 0) return null;
+
+  if (isDatabaseConnected()) {
+    const existing = await Bill.findById(billId) || await Bill.findOne({ billNumber: billId });
+    if (!existing) return null;
+
+    const newPaid = round2(Math.max(0, existing.paidAmount - numAllocated));
+    const newOutstanding = round2(Math.min(existing.totalAmount, existing.outstandingAmount + numAllocated));
+    const newPaymentStatus = newOutstanding === 0 ? "PAID" : newPaid > 0 ? "PARTIAL" : "UNPAID";
+
+    existing.paidAmount = newPaid;
+    existing.outstandingAmount = newOutstanding;
+    existing.paymentStatus = newPaymentStatus;
+    existing.updatedBy = user?.name || "System";
+    const saved = await existing.save();
+    return { ...saved.toObject(), id: saved._id.toString() };
+  }
+
+  const idx = inMemoryBills.findIndex((b) => b.id === billId || b.billNumber === billId);
+  if (idx !== -1) {
+    const b = inMemoryBills[idx];
+    const newPaid = round2(Math.max(0, Number(b.paidAmount || 0) - numAllocated));
+    const newOutstanding = round2(Math.min(Number(b.totalAmount || 0), Number(b.outstandingAmount || 0) + numAllocated));
+    const newPaymentStatus = newOutstanding === 0 ? "PAID" : newPaid > 0 ? "PARTIAL" : "UNPAID";
 
     inMemoryBills[idx] = {
       ...b,

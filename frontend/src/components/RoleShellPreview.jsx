@@ -301,44 +301,7 @@ export default function RoleShellPreview({ user, onLogout, token }) {
           <Coins size={14} />
           <span>Collections & Recon</span>
         </button>
-        <button
-          onClick={() => { setViewMode("exceptions"); setSelectedException(null); }}
-          style={{
-            background: viewMode === "exceptions" ? "rgba(239, 68, 68, 0.15)" : "transparent",
-            color: viewMode === "exceptions" ? "#ef4444" : "var(--text-muted)",
-            border: "none",
-            padding: "6px 14px",
-            borderRadius: "8px",
-            fontSize: "0.82rem",
-            fontWeight: "600",
-            cursor: "pointer",
-            display: "flex",
-            alignItems: "center",
-            gap: "6px"
-          }}
-        >
-          <AlertTriangle size={14} color="#ef4444" />
-          <span>Exceptions</span>
-        </button>
-        <button
-          onClick={() => { setViewMode("approvals"); setSelectedApproval(null); }}
-          style={{
-            background: viewMode === "approvals" ? "var(--badge-brand-bg)" : "transparent",
-            color: viewMode === "approvals" ? "var(--primary-400)" : "var(--text-muted)",
-            border: "none",
-            padding: "6px 14px",
-            borderRadius: "8px",
-            fontSize: "0.82rem",
-            fontWeight: "600",
-            cursor: "pointer",
-            display: "flex",
-            alignItems: "center",
-            gap: "6px"
-          }}
-        >
-          <ShieldCheck size={14} />
-          <span>Approvals</span>
-        </button>
+
         <button
           onClick={() => { setViewMode("reports"); }}
           style={{
@@ -608,7 +571,7 @@ export default function RoleShellPreview({ user, onLogout, token }) {
         borderTop: "1px solid var(--border-card)",
         marginTop: "auto"
       }}>
-        © Distributor Management System • Chirag Combines FMCG ERP
+        © Distributor Management System • Distributor ERP
       </footer>
     </div>
   );

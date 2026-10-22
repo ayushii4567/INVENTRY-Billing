@@ -6,144 +6,115 @@ import {
   ShieldCheck, 
   Sparkles,
   AlertCircle,
-  Crown,
-  TrendingUp,
-  Bike,
-  Check,
-  Eye,
-  EyeOff,
-  Zap,
-  Building2
+  Eye, 
+  EyeOff, 
+  Zap, 
+  Building2,
+  Boxes,
+  FileText,
+  PackagePlus,
+  BookOpen,
+  Compass,
+  CheckCircle2
 } from "lucide-react";
 import "./LoginScreen.css";
 
-const DEMO_ROLES = [
+const SOFTWARE_HIGHLIGHTS = [
   {
-    role: "SUPER_ADMIN",
-    title: "Admin (Owner)",
-    name: "Rajesh Sharma",
-    email: "owner@distributorerp.com",
-    password: "password123",
-    icon: Crown,
-    badgeText: "ADMIN",
-    themeColor: "#4f46e5",
-    themeBg: "rgba(79, 70, 229, 0.1)",
-    themeBorder: "#6366f1",
-    tagline: "Full Owner & Super Admin",
-    desc: "Billing & Invoices, Schemes, Ledgers, Pricing & Approvals"
+    title: "Sales Invoices & Billing (F8)",
+    desc: "Instant GST invoices, thermal receipt print, item scheme calculations & payment terms.",
+    icon: FileText,
+    color: "#4f46e5",
+    bg: "rgba(79, 70, 229, 0.1)"
   },
   {
-    role: "SALES_MANAGER",
-    title: "Sales Manager",
-    name: "Vikas Malhotra",
-    email: "salesmgr@distributorerp.com",
-    password: "password123",
-    icon: TrendingUp,
-    badgeText: "MANAGER",
-    themeColor: "#0284c7",
-    themeBg: "rgba(2, 132, 199, 0.1)",
-    themeBorder: "#38bdf8",
-    tagline: "Area Sales Manager",
-    desc: "Beat Planning, Route Allocations & Salesmen Performance"
+    title: "Purchase Inward (F9)",
+    desc: "Manufacturer inward bills with automatic inventory stock updates & batch management.",
+    icon: PackagePlus,
+    color: "#10b981",
+    bg: "rgba(16, 185, 129, 0.1)"
   },
   {
-    role: "SALESMAN",
-    title: "Salesman",
-    name: "Rahul Kumar",
-    email: "salesman@distributorerp.com",
-    password: "password123",
-    icon: Bike,
-    badgeText: "SALESMAN",
-    themeColor: "#d97706",
-    themeBg: "rgba(217, 119, 6, 0.12)",
-    themeBorder: "#f59e0b",
-    tagline: "Field Sales (Beat Route A)",
-    desc: "Retailer Visits, Instant Order Booking & Market Collections"
+    title: "Party Ledger & Statement (F4)",
+    desc: "Complete double-entry Dr/Cr running balances for retail customers & suppliers.",
+    icon: BookOpen,
+    color: "#6366f1",
+    bg: "rgba(99, 102, 241, 0.1)"
+  },
+  {
+    title: "Beats, Routes & Logistics",
+    desc: "Multi-area beat management, salesman allocation & real-time delivery collections.",
+    icon: Compass,
+    color: "#0284c7",
+    bg: "rgba(2, 132, 199, 0.1)"
   }
 ];
 
 export default function LoginScreen({ onLogin, isLoading, errorMessage }) {
-  const [selectedRole, setSelectedRole] = useState("SUPER_ADMIN");
   const [emailOrMobile, setEmailOrMobile] = useState("owner@distributorerp.com");
   const [password, setPassword] = useState("password123");
   const [showPassword, setShowPassword] = useState(false);
-
-  const activeRoleConfig = DEMO_ROLES.find(r => r.role === selectedRole) || DEMO_ROLES[0];
-
-  const handleSelectRole = (roleItem) => {
-    setSelectedRole(roleItem.role);
-    setEmailOrMobile(roleItem.email);
-    setPassword(roleItem.password);
-  };
-
-  const handleInstantLogin = (roleItem, e) => {
-    if (e) e.stopPropagation();
-    handleSelectRole(roleItem);
-    onLogin({ emailOrMobile: roleItem.email, password: roleItem.password, role: roleItem.role });
-  };
+  const [rememberMe, setRememberMe] = useState(true);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onLogin({ emailOrMobile, password, role: selectedRole });
+    if (!emailOrMobile.trim()) return;
+    onLogin({ 
+      emailOrMobile: emailOrMobile.trim(), 
+      password,
+      rememberMe
+    });
+  };
+
+  const handleQuickDemoLogin = () => {
+    setEmailOrMobile("owner@distributorerp.com");
+    setPassword("password123");
+    onLogin({ 
+      emailOrMobile: "owner@distributorerp.com", 
+      password: "password123",
+      rememberMe: true
+    });
   };
 
   return (
     <div className="login-page-container">
       <div className="login-layout-grid">
         
-        {/* Left Column: Brand Hero & 3 Roles Blueprint */}
+        {/* Left Column: Brand Hero & Software Capabilities */}
         <div className="login-hero-panel">
           <div>
             <div className="hero-brand-badge">
               <Sparkles size={14} />
-              <span>Chirag Combines FMCG</span>
+              <span>Enterprise Distributor ERP</span>
             </div>
 
             <h1 className="hero-brand-title" style={{ marginTop: "14px" }}>
-              Smart Distribution &amp; <span>Billing Portal</span>
+              DISTRIBUTOR <span>ERP</span>
             </h1>
 
             <p className="hero-brand-desc" style={{ marginTop: "12px" }}>
-              High-velocity FMCG billing, retailer order booking, and beat management engineered for 3 core operating roles.
+              Enterprise billing, inventory tracking, and Tally Prime accounting workstation built for high-velocity FMCG distribution.
             </p>
           </div>
 
-          {/* 3 Dedicated Role Visual Showcase */}
+          {/* Software Modules Blueprint Showcase */}
           <div className="hero-roles-overview">
-            {DEMO_ROLES.map((d) => {
-              const RoleIcon = d.icon;
-              const isCurrent = selectedRole === d.role;
+            {SOFTWARE_HIGHLIGHTS.map((item, idx) => {
+              const Icon = item.icon;
               return (
-                <div 
-                  key={d.role} 
-                  className="hero-role-pill"
-                  style={{
-                    borderColor: isCurrent ? d.themeBorder : "rgba(226, 232, 240, 0.9)",
-                    background: isCurrent ? "#ffffff" : "rgba(255, 255, 255, 0.8)"
-                  }}
-                >
+                <div key={idx} className="hero-role-pill">
                   <div 
                     className="hero-role-icon-box"
-                    style={{ background: d.themeBg, color: d.themeColor }}
+                    style={{ background: item.bg, color: item.color }}
                   >
-                    <RoleIcon size={20} />
+                    <Icon size={19} />
                   </div>
                   <div className="hero-role-info">
                     <div className="hero-role-title">
-                      <span>{d.title}</span>
-                      <span style={{
-                        fontSize: "0.65rem",
-                        fontWeight: "800",
-                        padding: "1px 6px",
-                        borderRadius: "4px",
-                        background: d.themeBg,
-                        color: d.themeColor
-                      }}>
-                        {d.badgeText}
-                      </span>
+                      <span>{item.title}</span>
                     </div>
                     <div className="hero-role-subtitle">
-                      {d.desc}
+                      {item.desc}
                     </div>
                   </div>
                 </div>
@@ -151,202 +122,223 @@ export default function LoginScreen({ onLogin, isLoading, errorMessage }) {
             })}
           </div>
 
-          {/* Trust Badges */}
+          {/* System Security Badges */}
           <div className="hero-trust-badges">
             <div className="hero-trust-item">
               <ShieldCheck size={16} color="#10b981" />
-              <span>3 Verified Roles</span>
+              <span>256-Bit SSL Encrypted</span>
             </div>
             <div className="hero-trust-item">
-              <Zap size={16} color="#f59e0b" />
-              <span>1-Click Instant Switching</span>
+              <CheckCircle2 size={16} color="#3b82f6" />
+              <span>MongoDB Atlas Connected</span>
             </div>
             <div className="hero-trust-item">
               <Building2 size={16} color="#6366f1" />
-              <span>Direct Billing Engine</span>
+              <span>Tally Prime Engine v2.4</span>
             </div>
           </div>
         </div>
 
-        {/* Right Column: Clean Interactive Login Card */}
+        {/* Right Column: Clean Enterprise Sign In Card */}
         <div className="login-auth-card">
-          <div className="card-header-section">
-            <h2 className="card-main-title">Sign In to Portal</h2>
+          
+          {/* Card Header */}
+          <div className="card-header-section" style={{ textAlign: "left" }}>
+            <div style={{
+              width: "42px",
+              height: "42px",
+              borderRadius: "10px",
+              background: "linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "#ffffff",
+              boxShadow: "0 4px 12px rgba(79, 70, 229, 0.25)",
+              marginBottom: "14px"
+            }}>
+              <Boxes size={22} />
+            </div>
+            <h2 className="card-main-title">Sign In to Workstation</h2>
             <p className="card-sub-title">
-              Select your profile for instant access or enter credentials below.
+              Enter your authorized credentials to access your business workstation.
             </p>
           </div>
 
-          {/* Role Picker */}
-          <div className="role-picker-section">
-            <div className="role-picker-label">
-              <span className="role-picker-label-text">
-                <Sparkles size={13} />
-                Select Role to Sign In
-              </span>
-              <span className="role-picker-pass-hint">
-                Pass: password123
-              </span>
-            </div>
-
-            <div className="role-picker-list">
-              {DEMO_ROLES.map((d) => {
-                const RoleIcon = d.icon;
-                const isSelected = selectedRole === d.role;
-
-                return (
-                  <div
-                    key={d.role}
-                    className={`role-picker-item ${isSelected ? "active" : ""}`}
-                    onClick={() => handleSelectRole(d)}
-                    style={{
-                      borderColor: isSelected ? d.themeBorder : "#e2e8f0",
-                      background: isSelected ? d.themeBg : "#ffffff"
-                    }}
-                  >
-                    <div className="role-picker-left">
-                      <div 
-                        className="role-picker-icon-wrapper"
-                        style={{ background: isSelected ? "#ffffff" : d.themeBg, color: d.themeColor }}
-                      >
-                        <RoleIcon size={18} />
-                      </div>
-                      <div className="role-picker-texts">
-                        <div className="role-picker-name-row">
-                          <span className="role-picker-title">{d.title}</span>
-                          <span className="role-picker-person-name">• {d.name}</span>
-                        </div>
-                        <span className="role-picker-email">{d.email}</span>
-                      </div>
-                    </div>
-
-                    <div className="role-picker-action">
-                      <button
-                        type="button"
-                        className="quick-signin-btn"
-                        onClick={(e) => handleInstantLogin(d, e)}
-                        style={{
-                          background: d.themeColor,
-                          color: "#ffffff"
-                        }}
-                        title={`Instantly sign in as ${d.title}`}
-                      >
-                        <Zap size={13} />
-                        <span>1-Click Sign In</span>
-                      </button>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          <div className="login-divider">
-            <span className="login-divider-text">Or Sign In with Credentials</span>
-          </div>
-
-          {/* Error Message */}
+          {/* Error Message Alert */}
           {errorMessage && (
-            <div style={{
-              background: "#fef2f2",
-              border: "1px solid #fecaca",
-              color: "#b91c1c",
-              padding: "11px 14px",
-              borderRadius: "12px",
-              fontSize: "0.84rem",
-              marginBottom: "16px",
+            <div className="auth-error-banner" style={{
               display: "flex",
               alignItems: "center",
-              gap: "10px"
+              gap: "10px",
+              padding: "10px 14px",
+              borderRadius: "8px",
+              background: "rgba(239, 68, 68, 0.08)",
+              border: "1px solid rgba(239, 68, 68, 0.2)",
+              color: "#dc2626",
+              fontSize: "0.82rem",
+              fontWeight: "600",
+              marginBottom: "16px"
             }}>
-              <AlertCircle size={17} color="#ef4444" style={{ flexShrink: 0 }} />
+              <AlertCircle size={17} style={{ flexShrink: 0 }} />
               <span>{errorMessage}</span>
             </div>
           )}
 
-          {/* Form */}
-          <form onSubmit={handleSubmit}>
-            <div className="login-input-row">
-              <label className="login-input-label">Email or Mobile</label>
-              <div className="login-input-box">
-                <Mail className="login-input-leading-icon" size={17} />
+          {/* Login Form */}
+          <form onSubmit={handleSubmit} className="auth-form-body">
+            
+            {/* Email or Username */}
+            <div className="form-field-group">
+              <label className="form-field-label">Email or Username</label>
+              <div className="form-input-container">
+                <Mail size={17} className="input-field-icon" />
                 <input
                   type="text"
-                  className="login-input-field"
-                  placeholder="e.g. owner@distributorerp.com"
+                  required
                   value={emailOrMobile}
                   onChange={(e) => setEmailOrMobile(e.target.value)}
+                  placeholder="e.g. owner@distributorerp.com"
+                  className="auth-text-input"
                   autoComplete="username"
-                  required
                 />
               </div>
             </div>
 
-            <div className="login-input-row">
-              <div className="login-input-label-row">
-                <label className="login-input-label">Password</label>
+            {/* Password */}
+            <div className="form-field-group">
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "6px" }}>
+                <label className="form-field-label" style={{ margin: 0 }}>Password</label>
                 <button
                   type="button"
-                  onClick={() => setPassword("password123")}
+                  onClick={() => alert("Default demo password is: password123")}
                   style={{
-                    background: "none",
+                    background: "transparent",
                     border: "none",
-                    color: "#4f46e5",
-                    fontSize: "0.76rem",
-                    fontWeight: "700",
+                    color: "var(--primary-600, #4f46e5)",
+                    fontSize: "0.75rem",
+                    fontWeight: "600",
                     cursor: "pointer",
                     padding: 0
                   }}
                 >
-                  Autofill Default Password
+                  Need Help?
                 </button>
               </div>
-              <div className="login-input-box">
-                <Lock className="login-input-leading-icon" size={17} />
+              <div className="form-input-container">
+                <Lock size={17} className="input-field-icon" />
                 <input
                   type={showPassword ? "text" : "password"}
-                  className="login-input-field"
-                  placeholder="Enter your password"
+                  required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••••••"
+                  className="auth-text-input"
                   autoComplete="current-password"
-                  required
                 />
                 <button
                   type="button"
-                  className="login-password-toggle-btn"
+                  className="input-eye-toggle"
                   onClick={() => setShowPassword(!showPassword)}
                   title={showPassword ? "Hide password" : "Show password"}
                 >
-                  {showPassword ? <EyeOff size={17} /> : <Eye size={17} />}
+                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
             </div>
 
+            {/* Remember Me Option */}
+            <div style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              fontSize: "0.8rem",
+              color: "var(--text-muted, #475569)",
+              marginTop: "4px"
+            }}>
+              <label style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer", userSelect: "none" }}>
+                <input
+                  type="checkbox"
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
+                  style={{ accentColor: "#4f46e5", cursor: "pointer", width: "15px", height: "15px" }}
+                />
+                <span>Remember this workstation</span>
+              </label>
+              <span style={{ color: "var(--text-dim, #94a3b8)", fontSize: "0.74rem" }}>
+                v2.4 Enterprise
+              </span>
+            </div>
+
+            {/* Submit Button */}
             <button
               type="submit"
-              className="login-submit-btn"
               disabled={isLoading}
+              className="auth-submit-btn"
               style={{
-                background: `linear-gradient(135deg, ${activeRoleConfig.themeColor} 0%, #312e81 100%)`
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "10px",
+                width: "100%",
+                padding: "12px 20px",
+                borderRadius: "10px",
+                background: "linear-gradient(135deg, #4f46e5 0%, #4338ca 100%)",
+                color: "#ffffff",
+                border: "none",
+                fontSize: "0.92rem",
+                fontWeight: "700",
+                cursor: isLoading ? "wait" : "pointer",
+                boxShadow: "0 4px 14px rgba(79, 70, 229, 0.3)",
+                transition: "all 0.18s ease",
+                marginTop: "12px"
               }}
             >
-              {isLoading ? (
-                <span>Authenticating Session...</span>
-              ) : (
-                <>
-                  <span>Sign In as {activeRoleConfig.title}</span>
-                  <ArrowRight size={18} />
-                </>
-              )}
+              <span>{isLoading ? "Authenticating Workstation..." : "Sign In to ERP Workstation"}</span>
+              <ArrowRight size={17} />
             </button>
           </form>
 
-          {/* Security Footer */}
-          <div className="card-security-footer">
-            <ShieldCheck size={15} color="#10b981" />
-            <span>Authorized FMCG Distribution ERP • 3 Active Roles</span>
+          {/* Quick 1-Click Demo Login Bar */}
+          <div style={{
+            marginTop: "20px",
+            paddingTop: "16px",
+            borderTop: "1px solid var(--border-card, #e2e8f0)",
+            textAlign: "center"
+          }}>
+            <button
+              type="button"
+              onClick={handleQuickDemoLogin}
+              style={{
+                width: "100%",
+                padding: "10px 14px",
+                borderRadius: "8px",
+                border: "1px dashed rgba(79, 70, 229, 0.35)",
+                background: "rgba(79, 70, 229, 0.04)",
+                color: "#4338ca",
+                fontSize: "0.82rem",
+                fontWeight: "700",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "8px",
+                transition: "all 0.16s ease"
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = "rgba(79, 70, 229, 0.08)";
+                e.currentTarget.style.borderColor = "rgba(79, 70, 229, 0.6)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = "rgba(79, 70, 229, 0.04)";
+                e.currentTarget.style.borderColor = "rgba(79, 70, 229, 0.35)";
+              }}
+              title="Instant Login as Rajesh Sharma (Owner / Super Admin)"
+            >
+              <Zap size={15} color="#4f46e5" />
+              <span>⚡ 1-Click Demo Access (Rajesh Sharma • Owner)</span>
+            </button>
           </div>
+
         </div>
 
       </div>

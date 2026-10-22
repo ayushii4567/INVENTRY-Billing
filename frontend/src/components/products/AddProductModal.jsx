@@ -5,19 +5,20 @@ export default function AddProductModal({ token, onClose, onSuccess }) {
   const [formData, setFormData] = useState({
     productName: "",
     sku: "",
-    companyId: "COMP-NESTLE",
-    category: "Noodles",
+    companyId: "GRP-FINISHED",
+    category: "Finished Goods",
     subcategory: "",
-    unit: "PACK",
-    packSize: "",
+    hsnCode: "84713010",
+    unit: "PCS",
+    packSize: "1 Pc",
     mrp: "",
     purchaseRate: "",
     saleRate: "",
-    taxRate: "5",
+    taxRate: "18",
     discount: "0",
     minimumStock: "10",
-    batchTracking: true,
-    expiryTracking: true,
+    batchTracking: false,
+    expiryTracking: false,
     description: "",
     status: "ACTIVE"
   });
@@ -70,13 +71,13 @@ export default function AddProductModal({ token, onClose, onSuccess }) {
       const json = await response.json();
 
       if (response.ok && json.success) {
-        onSuccess(`Product '${json.product.productName}' (${json.product.productCode}) added successfully!`);
+        onSuccess(`Stock Item '${json.product.productName}' (${json.product.productCode}) added successfully!`);
         onClose();
       } else {
-        setError(json.message || "Failed to create product.");
+        setError(json.message || "Failed to create stock item.");
       }
     } catch (err) {
-      console.error("Create product error:", err);
+      console.error("Create stock item error:", err);
       setError("Network error connecting to Product Master API.");
     } finally {
       setLoading(false);
@@ -149,10 +150,10 @@ export default function AddProductModal({ token, onClose, onSuccess }) {
           </div>
           <div>
             <h3 style={{ fontSize: "1.25rem", fontWeight: "800", color: "var(--text-main)" }}>
-              Add New Product
+              Add New Stock Item
             </h3>
             <p style={{ fontSize: "0.82rem", color: "var(--text-muted)" }}>
-              Register a new FMCG SKU into the Chirag Combines Catalog
+              Register a standard stock item with Tally ERP specifications into Product Master
             </p>
           </div>
         </div>
@@ -186,12 +187,12 @@ export default function AddProductModal({ token, onClose, onSuccess }) {
             <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: "16px" }}>
               <div>
                 <label style={{ display: "block", fontSize: "0.8rem", color: "var(--text-muted)", marginBottom: "6px", fontWeight: "600" }}>
-                  Product Name *
+                  Stock Item Name *
                 </label>
                 <input
                   type="text"
                   name="productName"
-                  placeholder="e.g. Maggi 2-Minute Noodles 70g"
+                  placeholder="e.g. Standard Commercial Item A"
                   value={formData.productName}
                   onChange={handleChange}
                   required
@@ -211,12 +212,12 @@ export default function AddProductModal({ token, onClose, onSuccess }) {
 
               <div>
                 <label style={{ display: "block", fontSize: "0.8rem", color: "var(--text-muted)", marginBottom: "6px", fontWeight: "600" }}>
-                  SKU (Stock Keeping Unit) *
+                  SKU / Part No. *
                 </label>
                 <input
                   type="text"
                   name="sku"
-                  placeholder="e.g. SKU-MAGGI-70"
+                  placeholder="e.g. STD-ITM-001"
                   value={formData.sku}
                   onChange={handleChange}
                   required
@@ -237,15 +238,15 @@ export default function AddProductModal({ token, onClose, onSuccess }) {
             </div>
           </div>
 
-          {/* Section 2: Company & Categorization */}
+          {/* Section 2: Stock Group & Categorization */}
           <div>
             <div style={{ fontSize: "0.82rem", fontWeight: "700", color: "var(--primary-400)", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "12px" }}>
-              2. Company & Brand Hierarchy
+              2. Stock Group & Categorization
             </div>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "16px" }}>
               <div>
                 <label style={{ display: "block", fontSize: "0.8rem", color: "var(--text-muted)", marginBottom: "6px", fontWeight: "600" }}>
-                  Company / Brand *
+                  Stock Group *
                 </label>
                 <select
                   name="companyId"
@@ -264,9 +265,11 @@ export default function AddProductModal({ token, onClose, onSuccess }) {
                     boxSizing: "border-box"
                   }}
                 >
-                  <option value="COMP-NESTLE">Nestlé</option>
-                  <option value="COMP-PATANJALI">Patanjali</option>
-                  <option value="COMP-GSK">GSK / Health</option>
+                  <option value="GRP-FINISHED">Finished Goods</option>
+                  <option value="GRP-TRADING">Trading Goods</option>
+                  <option value="GRP-RAW">Raw Materials</option>
+                  <option value="GRP-CONSUMABLES">Consumables</option>
+                  <option value="GRP-GENERAL">General Goods</option>
                 </select>
               </div>
 
@@ -291,26 +294,24 @@ export default function AddProductModal({ token, onClose, onSuccess }) {
                     boxSizing: "border-box"
                   }}
                 >
-                  <option value="Noodles">Noodles</option>
-                  <option value="Confectionery">Confectionery</option>
-                  <option value="Beverages">Beverages</option>
-                  <option value="Dairy">Dairy</option>
-                  <option value="Honey">Honey</option>
-                  <option value="Oral Care">Oral Care</option>
-                  <option value="Personal Care">Personal Care</option>
-                  <option value="Staples">Staples</option>
-                  <option value="Health Drinks">Health Drinks</option>
+                  <option value="Finished Goods">Finished Goods</option>
+                  <option value="Trading Goods">Trading Goods</option>
+                  <option value="Raw Materials">Raw Materials</option>
+                  <option value="Consumables">Consumables</option>
+                  <option value="General Goods">General Goods</option>
+                  <option value="Assemblies">Assemblies & Modules</option>
+                  <option value="Packaging Materials">Packaging Materials</option>
                 </select>
               </div>
 
               <div>
                 <label style={{ display: "block", fontSize: "0.8rem", color: "var(--text-muted)", marginBottom: "6px", fontWeight: "600" }}>
-                  Subcategory
+                  Subcategory / Class
                 </label>
                 <input
                   type="text"
                   name="subcategory"
-                  placeholder="e.g. Instant Noodles"
+                  placeholder="e.g. Standard Commercial Item"
                   value={formData.subcategory}
                   onChange={handleChange}
                   style={{
@@ -329,12 +330,37 @@ export default function AddProductModal({ token, onClose, onSuccess }) {
             </div>
           </div>
 
-          {/* Section 3: Unit & Pack Size */}
+          {/* Section 3: HSN Code & Packaging Units */}
           <div>
             <div style={{ fontSize: "0.82rem", fontWeight: "700", color: "var(--primary-400)", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "12px" }}>
-              3. Packaging & Unit Specification
+              3. HSN Code & Unit of Measure (UoM)
             </div>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "16px" }}>
+              <div>
+                <label style={{ display: "block", fontSize: "0.8rem", color: "var(--text-muted)", marginBottom: "6px", fontWeight: "600" }}>
+                  HSN / SAC Code (GST) *
+                </label>
+                <input
+                  type="text"
+                  name="hsnCode"
+                  placeholder="e.g. 84713010"
+                  value={formData.hsnCode}
+                  onChange={handleChange}
+                  style={{
+                    width: "100%",
+                    background: "var(--bg-input)",
+                    border: "1px solid var(--border-card)",
+                    color: "var(--text-main)",
+                    borderRadius: "10px",
+                    padding: "10px 14px",
+                    fontSize: "0.88rem",
+                    outline: "none",
+                    fontFamily: "var(--font-mono)",
+                    boxSizing: "border-box"
+                  }}
+                />
+              </div>
+
               <div>
                 <label style={{ display: "block", fontSize: "0.8rem", color: "var(--text-muted)", marginBottom: "6px", fontWeight: "600" }}>
                   Unit of Measure *
@@ -357,14 +383,17 @@ export default function AddProductModal({ token, onClose, onSuccess }) {
                   }}
                 >
                   <option value="PCS">PCS (Pieces)</option>
-                  <option value="PACK">PACK (Pouch / Packet)</option>
-                  <option value="BOX">BOX</option>
-                  <option value="CASE">CASE</option>
+                  <option value="BOX">BOX (Boxes)</option>
+                  <option value="NOS">NOS (Numbers)</option>
+                  <option value="SET">SET (Sets)</option>
+                  <option value="BAG">BAG (Bags)</option>
+                  <option value="PKT">PKT (Packets)</option>
                   <option value="KG">KG (Kilograms)</option>
-                  <option value="GRAM">GRAM</option>
+                  <option value="GRAM">GRAM (Grams)</option>
                   <option value="LTR">LTR (Litres)</option>
                   <option value="ML">ML (Millilitres)</option>
-                  <option value="DOZEN">DOZEN</option>
+                  <option value="DOZEN">DOZEN (Dozens)</option>
+                  <option value="MTR">MTR (Metres)</option>
                 </select>
               </div>
 
@@ -375,7 +404,7 @@ export default function AddProductModal({ token, onClose, onSuccess }) {
                 <input
                   type="text"
                   name="packSize"
-                  placeholder="e.g. 70g, 500g Jar, 1L Carton"
+                  placeholder="e.g. 1 Pc, Box of 50"
                   value={formData.packSize}
                   onChange={handleChange}
                   style={{
@@ -482,7 +511,7 @@ export default function AddProductModal({ token, onClose, onSuccess }) {
 
               <div>
                 <label style={{ display: "block", fontSize: "0.8rem", color: "var(--text-muted)", marginBottom: "6px", fontWeight: "600" }}>
-                  Tax Rate (%)
+                  GST Rate (%)
                 </label>
                 <select
                   name="taxRate"
@@ -500,11 +529,11 @@ export default function AddProductModal({ token, onClose, onSuccess }) {
                     boxSizing: "border-box"
                   }}
                 >
-                  <option value="0">0% (Nil)</option>
-                  <option value="5">5% (Standard FMCG)</option>
-                  <option value="12">12% (Packaged Foods)</option>
-                  <option value="18">18% (Personal Care)</option>
-                  <option value="28">28% (Luxury)</option>
+                  <option value="0">0% (Exempt / Nil)</option>
+                  <option value="5">5% (Standard 5%)</option>
+                  <option value="12">12% (Standard 12%)</option>
+                  <option value="18">18% (Standard 18%)</option>
+                  <option value="28">28% (Standard 28%)</option>
                 </select>
               </div>
             </div>
@@ -513,7 +542,7 @@ export default function AddProductModal({ token, onClose, onSuccess }) {
           {/* Section 5: Inventory Rules & Tracking Flags */}
           <div>
             <div style={{ fontSize: "0.82rem", fontWeight: "700", color: "var(--primary-400)", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "12px" }}>
-              5. Inventory Rules & Future Tracking Flags
+              5. Inventory Rules & Stock Control
             </div>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "16px", alignItems: "center" }}>
               <div>

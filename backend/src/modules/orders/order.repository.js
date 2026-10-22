@@ -131,14 +131,41 @@ export const createOrderRecord = async (orderData) => {
   const orderNumber = generateOrderNumber();
   const now = new Date().toISOString();
 
+  const customerObj = orderData.customer || {
+    customerId: orderData.customerId || "",
+    customerCode: orderData.customerCode || "",
+    customerName: orderData.customerName || orderData.shopName || "",
+    ownerName: orderData.ownerName || "",
+    mobile: orderData.mobile || "",
+    address: orderData.address || "",
+    areaId: orderData.areaId || orderData.area?.areaId || "",
+    areaName: orderData.areaName || orderData.area?.areaName || "",
+    routeId: orderData.routeId || orderData.route?.routeId || "",
+    routeName: orderData.routeName || orderData.route?.routeName || ""
+  };
+  if (!customerObj.customerName && orderData.shopName) {
+    customerObj.customerName = orderData.shopName;
+  }
+
+  const salesmanObj = orderData.salesman || {
+    salesmanId: orderData.salesmanId || "",
+    salesmanCode: orderData.salesmanCode || "SM-000001",
+    salesmanName: orderData.salesmanName || "",
+    userId: orderData.userId || null
+  };
+
   const newOrder = {
     id: newId,
     orderNumber,
     orderDate: orderData.orderDate || now,
-    customer: orderData.customer,
-    salesman: orderData.salesman,
-    route: orderData.route || {},
-    area: orderData.area || {},
+    customer: customerObj,
+    salesman: salesmanObj,
+    customerId: customerObj.customerId,
+    customerName: customerObj.customerName,
+    customerCode: customerObj.customerCode,
+    salesmanId: salesmanObj.salesmanId,
+    route: orderData.route || { routeId: customerObj.routeId, routeName: customerObj.routeName },
+    area: orderData.area || { areaId: customerObj.areaId, areaName: customerObj.areaName },
     items: orderData.items,
     pricingSummary: orderData.pricingSummary,
     status: orderData.status || "DRAFT",

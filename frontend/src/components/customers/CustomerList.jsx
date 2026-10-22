@@ -333,63 +333,71 @@ export default function CustomerList({ token, onSelectCustomer, onOpenAddModal, 
 
         {/* Data Table */}
         {!loading && !error && customers.length > 0 && (
-          <div style={{ overflowX: "auto" }}>
-            <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: "0.88rem" }}>
+          <div className="erp-table-container">
+            <table className="erp-table" style={{ minWidth: "1080px" }}>
               <thead>
-                <tr style={{ background: "var(--bg-input)", borderBottom: "1px solid var(--border-card)", color: "var(--text-muted)", fontSize: "0.78rem", textTransform: "uppercase" }}>
-                  <th style={{ padding: "16px 20px" }}>Code</th>
-                  <th style={{ padding: "16px 20px" }}>Shop & Owner</th>
-                  <th style={{ padding: "16px 20px" }}>Contact</th>
-                  <th style={{ padding: "16px 20px" }}>Route & Area</th>
-                  <th style={{ padding: "16px 20px" }}>Salesman</th>
-                  <th style={{ padding: "16px 20px" }}>Credit Limit</th>
-                  <th style={{ padding: "16px 20px" }}>Status</th>
-                  <th style={{ padding: "16px 20px", textAlign: "right" }}>Actions</th>
+                <tr>
+                  <th style={{ width: "110px", padding: "12px 14px" }}>Code</th>
+                  <th style={{ minWidth: "200px", padding: "12px 14px" }}>Shop & Owner</th>
+                  <th style={{ width: "160px", padding: "12px 14px" }}>Contact</th>
+                  <th style={{ width: "170px", padding: "12px 14px" }}>Route & Area</th>
+                  <th style={{ width: "140px", padding: "12px 14px" }}>Salesman</th>
+                  <th style={{ width: "130px", padding: "12px 14px" }}>Credit Limit</th>
+                  <th style={{ width: "100px", padding: "12px 14px" }}>Status</th>
+                  <th style={{ width: "210px", padding: "12px 14px", textAlign: "right" }}>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {customers.map((c) => (
                   <tr 
                     key={c.id} 
-                    style={{ borderBottom: "1px solid var(--border-card)", transition: "background 0.2s ease" }}
+                    className="table-row-hover"
                   >
-                    <td style={{ padding: "16px 20px", fontWeight: "700", color: "var(--primary-400)" }}>
-                      {c.customerCode}
+                    <td style={{ padding: "11px 14px", fontWeight: "700", color: "var(--primary-400)", whiteSpace: "nowrap" }}>
+                      <span style={{
+                        background: "var(--badge-brand-bg)",
+                        padding: "3px 8px",
+                        borderRadius: "6px",
+                        fontFamily: "var(--font-mono)",
+                        fontSize: "0.78rem"
+                      }}>
+                        {c.customerCode}
+                      </span>
                     </td>
 
-                    <td style={{ padding: "16px 20px" }}>
+                    <td style={{ padding: "11px 14px" }}>
                       <div style={{ fontWeight: "700", color: "var(--text-main)" }}>{c.shopName}</div>
-                      <div style={{ fontSize: "0.78rem", color: "var(--text-dim)" }}>Owner: {c.ownerName || "N/A"}</div>
+                      <div style={{ fontSize: "0.76rem", color: "var(--text-dim)" }}>Owner: {c.ownerName || "N/A"}</div>
                     </td>
 
-                    <td style={{ padding: "16px 20px" }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: "6px", color: "var(--text-main)" }}>
-                        <Phone size={14} color="var(--text-muted)" />
+                    <td style={{ padding: "11px 14px", whiteSpace: "nowrap" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "6px", color: "var(--text-main)", fontSize: "0.83rem" }}>
+                        <Phone size={13} color="var(--text-muted)" />
                         <span>{c.mobile}</span>
                       </div>
-                      <div style={{ fontSize: "0.75rem", color: "var(--text-dim)" }}>{c.address.slice(0, 25)}...</div>
+                      <div style={{ fontSize: "0.74rem", color: "var(--text-dim)" }}>{c.address ? c.address.slice(0, 24) : ""}...</div>
                     </td>
 
-                    <td style={{ padding: "16px 20px" }}>
+                    <td style={{ padding: "11px 14px", whiteSpace: "nowrap" }}>
                       <div style={{ fontWeight: "600", color: "var(--text-main)" }}>{c.routeName}</div>
-                      <div style={{ fontSize: "0.75rem", color: "var(--text-dim)" }}>{c.areaName}</div>
+                      <div style={{ fontSize: "0.74rem", color: "var(--text-dim)" }}>{c.areaName}</div>
                     </td>
 
-                    <td style={{ padding: "16px 20px" }}>
-                      <div style={{ fontSize: "0.85rem", color: "var(--text-main)", fontWeight: "500" }}>{c.salesmanName}</div>
+                    <td style={{ padding: "11px 14px", whiteSpace: "nowrap" }}>
+                      <div style={{ fontSize: "0.84rem", color: "var(--text-main)", fontWeight: "500" }}>{c.salesmanName}</div>
                     </td>
 
-                    <td style={{ padding: "16px 20px" }}>
-                      <div style={{ fontWeight: "700", color: "#10b981" }}>{formatCurrency(c.creditLimit)}</div>
-                      <div style={{ fontSize: "0.75rem", color: "var(--text-dim)" }}>Terms: {c.paymentTerms}</div>
+                    <td style={{ padding: "11px 14px", whiteSpace: "nowrap" }}>
+                      <div style={{ fontWeight: "700", color: "#10b981", fontVariantNumeric: "tabular-nums" }}>{formatCurrency(c.creditLimit)}</div>
+                      <div style={{ fontSize: "0.74rem", color: "var(--text-dim)" }}>Terms: {c.paymentTerms}</div>
                     </td>
 
-                    <td style={{ padding: "16px 20px" }}>
+                    <td style={{ padding: "11px 14px", whiteSpace: "nowrap" }}>
                       {getStatusBadge(c.status)}
                     </td>
 
-                    <td style={{ padding: "16px 20px", textAlign: "right" }}>
-                      <div style={{ display: "flex", gap: "8px", justifyContent: "flex-end" }}>
+                    <td style={{ padding: "11px 14px", textAlign: "right", whiteSpace: "nowrap" }}>
+                      <div style={{ display: "flex", gap: "6px", justifyContent: "flex-end" }}>
                         <button
                           onClick={() => onSelectCustomer(c)}
                           title="View Details"
@@ -397,16 +405,16 @@ export default function CustomerList({ token, onSelectCustomer, onOpenAddModal, 
                             background: "var(--bg-input)",
                             border: "1px solid var(--border-card)",
                             color: "var(--text-main)",
-                            padding: "6px 10px",
-                            borderRadius: "8px",
+                            padding: "5px 9px",
+                            borderRadius: "7px",
                             cursor: "pointer",
                             display: "flex",
                             alignItems: "center",
                             gap: "4px",
-                            fontSize: "0.78rem"
+                            fontSize: "0.76rem"
                           }}
                         >
-                          <Eye size={14} />
+                          <Eye size={13} />
                           <span>View</span>
                         </button>
 
@@ -417,16 +425,16 @@ export default function CustomerList({ token, onSelectCustomer, onOpenAddModal, 
                             background: "var(--bg-input)",
                             border: "1px solid var(--border-card)",
                             color: "var(--primary-400)",
-                            padding: "6px 10px",
-                            borderRadius: "8px",
+                            padding: "5px 9px",
+                            borderRadius: "7px",
                             cursor: "pointer",
                             display: "flex",
                             alignItems: "center",
                             gap: "4px",
-                            fontSize: "0.78rem"
+                            fontSize: "0.76rem"
                           }}
                         >
-                          <Edit3 size={14} />
+                          <Edit3 size={13} />
                           <span>Edit</span>
                         </button>
 
@@ -434,19 +442,19 @@ export default function CustomerList({ token, onSelectCustomer, onOpenAddModal, 
                           onClick={() => onOpenStatusModal(c)}
                           title="Change Status"
                           style={{
-                            background: "rgba(245, 158, 11, 0.12)",
-                            border: "1px solid rgba(245, 158, 11, 0.3)",
-                            color: "#f59e0b",
-                            padding: "6px 10px",
-                            borderRadius: "8px",
+                            background: "rgba(245, 158, 11, 0.1)",
+                            border: "1px solid rgba(245, 158, 11, 0.25)",
+                            color: "#d97706",
+                            padding: "5px 9px",
+                            borderRadius: "7px",
                             cursor: "pointer",
                             display: "flex",
                             alignItems: "center",
                             gap: "4px",
-                            fontSize: "0.78rem"
+                            fontSize: "0.76rem"
                           }}
                         >
-                          <ShieldAlert size={14} />
+                          <ShieldAlert size={13} />
                           <span>Status</span>
                         </button>
                       </div>

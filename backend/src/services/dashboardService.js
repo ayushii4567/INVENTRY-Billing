@@ -222,7 +222,7 @@ export const getOwnerDashboardData = async () => {
   });
 
   return {
-    company: "Chirag Combines FMCG",
+    company: "Distributor ERP",
     network: {
       totalOutlets: customers.length,
       activeSalesmen: salesmen.filter((s) => s.status === "ACTIVE").length,

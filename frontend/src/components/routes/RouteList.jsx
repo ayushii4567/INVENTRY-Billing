@@ -284,41 +284,35 @@ export default function RouteList({
       )}
 
       {/* Table Container */}
-      <div className="glass-card" style={{
-        borderRadius: "14px",
-        overflow: "hidden",
-        border: "1px solid var(--border-color)",
-        background: "var(--bg-surface)"
-      }}>
-        <div style={{ overflowX: "auto" }}>
-          <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left" }}>
-            <thead>
-              <tr style={{ background: "var(--table-header-bg)", borderBottom: "1px solid var(--border-color)" }}>
-                <th style={{ padding: "14px 18px", fontSize: "0.75rem", fontWeight: "700", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
-                  Beat Code
+      <div className="erp-table-container">
+        <table className="erp-table" style={{ minWidth: "980px" }}>
+          <thead>
+            <tr>
+              <th style={{ width: "120px", padding: "12px 14px" }}>
+                Beat Code
+              </th>
+              <th style={{ minWidth: "200px", padding: "12px 14px" }}>
+                Route / Beat Name
+              </th>
+              <th style={{ width: "180px", padding: "12px 14px" }}>
+                Territory / Area
+              </th>
+              <th style={{ width: "210px", padding: "12px 14px" }}>
+                Visit Days
+              </th>
+              <th style={{ width: "70px", padding: "12px 14px" }}>
+                Seq
+              </th>
+              <th style={{ width: "110px", padding: "12px 14px" }}>
+                Status
+              </th>
+              {canModify && (
+                <th style={{ width: "210px", padding: "12px 14px", textAlign: "right" }}>
+                  Actions
                 </th>
-                <th style={{ padding: "14px 18px", fontSize: "0.75rem", fontWeight: "700", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
-                  Route / Beat Name
-                </th>
-                <th style={{ padding: "14px 18px", fontSize: "0.75rem", fontWeight: "700", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
-                  Territory / Area
-                </th>
-                <th style={{ padding: "14px 18px", fontSize: "0.75rem", fontWeight: "700", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
-                  Visit Days
-                </th>
-                <th style={{ padding: "14px 18px", fontSize: "0.75rem", fontWeight: "700", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
-                  Seq
-                </th>
-                <th style={{ padding: "14px 18px", fontSize: "0.75rem", fontWeight: "700", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
-                  Status
-                </th>
-                {canModify && (
-                  <th style={{ padding: "14px 18px", fontSize: "0.75rem", fontWeight: "700", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em", textAlign: "right" }}>
-                    Actions
-                  </th>
-                )}
-              </tr>
-            </thead>
+              )}
+            </tr>
+          </thead>
             <tbody>
               {loading ? (
                 <tr>
@@ -369,12 +363,12 @@ export default function RouteList({
                     }}
                   >
                     {/* Code */}
-                    <td style={{ padding: "16px 18px", fontSize: "0.875rem", fontFamily: "monospace", fontWeight: "600", color: "var(--primary-400)" }}>
+                    <td style={{ padding: "11px 14px", fontSize: "0.85rem", fontFamily: "var(--font-mono)", fontWeight: "700", color: "var(--primary-400)", whiteSpace: "nowrap" }}>
                       {rt.routeCode}
                     </td>
 
                     {/* Name */}
-                    <td style={{ padding: "16px 18px" }}>
+                    <td style={{ padding: "11px 14px" }}>
                       <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
                         <div style={{
                           width: "32px",
@@ -396,7 +390,7 @@ export default function RouteList({
                     </td>
 
                     {/* Area */}
-                    <td style={{ padding: "16px 18px" }}>
+                    <td style={{ padding: "11px 14px" }}>
                       <div style={{ display: "flex", alignItems: "center", gap: "6px", color: "var(--text-main)", fontSize: "0.85rem" }}>
                         <MapPin size={14} style={{ color: "var(--text-muted)" }} />
                         <span>{rt.areaName || "Unassigned Territory"}</span>
@@ -404,7 +398,7 @@ export default function RouteList({
                     </td>
 
                     {/* Visit Days */}
-                    <td style={{ padding: "16px 18px" }}>
+                    <td style={{ padding: "11px 14px" }}>
                       <div style={{ display: "flex", gap: "4px", flexWrap: "wrap" }}>
                         {["MON", "TUE", "WED", "THU", "FRI", "SAT"].map((day) => {
                           const isActive = Array.isArray(rt.visitDays) && rt.visitDays.includes(day);
@@ -439,7 +433,7 @@ export default function RouteList({
                     </td>
 
                     {/* Status */}
-                    <td style={{ padding: "16px 18px" }}>
+                    <td style={{ padding: "11px 14px" }}>
                       <span style={{
                         display: "inline-flex",
                         alignItems: "center",
@@ -464,7 +458,7 @@ export default function RouteList({
 
                     {/* Actions */}
                     {canModify && (
-                      <td style={{ padding: "16px 18px", textAlign: "right" }}>
+                      <td style={{ padding: "11px 14px", textAlign: "right", whiteSpace: "nowrap" }}>
                         <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: "8px" }}>
                           <button
                             onClick={() => onOpenEditModal(rt)}
@@ -568,6 +562,5 @@ export default function RouteList({
           </div>
         </div>
       </div>
-    </div>
   );
 }

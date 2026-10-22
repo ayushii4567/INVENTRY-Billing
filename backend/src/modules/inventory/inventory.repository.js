@@ -12,17 +12,78 @@ const computeStatus = (currentStock, minimumStock) => {
 import { findActiveProducts } from "../products/product.repository.js";
 
 // Clean in-memory inventory & movement collections
-let inMemoryInventory = [];
-let inMemoryStockMovements = [];
+export let inMemoryInventory = [];
+export let inMemoryStockMovements = [];
 let movementCounter = 0;
+
+export const updateInventoryStockInMemory = (productIdOrCode, deltaQty, rate = null, itemMeta = {}) => {
+  let inv = inMemoryInventory.find(
+    (i) =>
+      i.productId === productIdOrCode ||
+      i.productCode === productIdOrCode ||
+      i.sku === productIdOrCode ||
+      (itemMeta.sku && i.sku === itemMeta.sku) ||
+      (itemMeta.productCode && i.productCode === itemMeta.productCode)
+  );
+
+  if (!inv) {
+    inv = {
+      id: `inv-${productIdOrCode}`,
+      inventoryCode: `STK-${Date.now().toString().slice(-6)}`,
+      productId: itemMeta.productId || productIdOrCode,
+      productCode: itemMeta.productCode || productIdOrCode,
+      productName: itemMeta.productName || productIdOrCode,
+      sku: itemMeta.sku || productIdOrCode,
+      category: itemMeta.category || "Trading Goods",
+      companyName: itemMeta.companyName || "Trading Goods",
+      unit: itemMeta.unit || "PCS",
+      currentStock: 0,
+      reservedStock: 0,
+      availableStock: 0,
+      minimumStock: 10,
+      status: "IN_STOCK",
+      purchaseRate: rate || 0,
+      saleRate: 0,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+    inMemoryInventory.push(inv);
+  } else {
+    if (itemMeta.sku) inv.sku = itemMeta.sku;
+    if (itemMeta.productName) inv.productName = itemMeta.productName;
+    if (itemMeta.productCode) inv.productCode = itemMeta.productCode;
+  }
+
+  const prev = inv.currentStock || 0;
+  const updated = Math.max(0, prev + deltaQty);
+  inv.currentStock = updated;
+  inv.availableStock = Math.max(0, (inv.availableStock || 0) + deltaQty);
+  if (rate !== null) inv.purchaseRate = rate;
+  inv.status = computeStatus(updated, inv.minimumStock);
+  inv.lastMovementAt = new Date().toISOString();
+  return inv;
+};
 
 export const syncProductsToInventory = async () => {
   try {
     const products = await findActiveProducts();
     for (const prod of products) {
       const exists = inMemoryInventory.find(
-        (inv) => inv.productId === prod.id || inv.productCode === prod.productCode
+        (inv) =>
+          inv.productId === prod.id ||
+          inv.productId === prod._id?.toString() ||
+          inv.productCode === prod.productCode ||
+          (prod.sku && inv.sku === prod.sku)
       );
+      if (exists) {
+        if (!exists.purchaseRate && prod.purchaseRate) exists.purchaseRate = prod.purchaseRate;
+        if (!exists.saleRate && prod.saleRate) exists.saleRate = prod.saleRate;
+        if (prod.productName) exists.productName = prod.productName;
+        if (prod.sku) exists.sku = prod.sku;
+        if (prod.productCode) exists.productCode = prod.productCode;
+        continue;
+      }
+
       if (!exists) {
         const codeSuffix = prod.productCode ? prod.productCode.replace("PRD-", "") : String(inMemoryInventory.length + 1).padStart(6, "0");
         inMemoryInventory.push({
@@ -64,10 +125,10 @@ export const getNextMovementNumber = async () => {
   return `MV-2026-${String(movementCounter).padStart(6, "0")}`;
 };
 
-export const findInventory = async (query = {}, pagination = { page: 1, limit: 10 }) => {
+export const findInventory = async (query = {}, pagination = {}) => {
   await syncProductsToInventory();
-  const page = Math.max(1, parseInt(pagination.page, 10) || 1);
-  const limit = Math.max(1, parseInt(pagination.limit, 10) || 10);
+  const page = Math.max(1, parseInt(pagination.page || query.page, 10) || 1);
+  const limit = Math.max(1, parseInt(pagination.limit || query.limit, 10) || 10);
 
   let filtered = [...inMemoryInventory];
 
@@ -110,6 +171,7 @@ export const findInventory = async (query = {}, pagination = { page: 1, limit: 1
 };
 
 export const findInventoryById = async (id) => {
+  await syncProductsToInventory();
   const item = inMemoryInventory.find((inv) => inv.id === id || inv._id === id);
   if (!item) return null;
 
@@ -126,6 +188,7 @@ export const findInventoryById = async (id) => {
 };
 
 export const findInventoryByProductId = async (productId) => {
+  await syncProductsToInventory();
   return inMemoryInventory.find((inv) => inv.productId === productId || inv.productCode === productId) || null;
 };
 
@@ -241,6 +304,7 @@ export const adjustStockRecord = async (inventoryId, { adjustmentType, quantity,
   // Update Inventory item
   const updatedItem = {
     ...target,
+    openingStock: (Number(target.openingStock || 0) === 0 && reason.toLowerCase().includes("opening")) ? qty : (target.openingStock || 0),
     currentStock: newStock,
     availableStock: Math.max(0, newStock - (target.reservedStock || 0)),
     status: newStatus,
@@ -376,3 +440,5 @@ export const deductStockForBillItems = async (billItems = [], bill, user) => {
 
   return movements;
 };
+
+export const findInventoryItems = findInventory;

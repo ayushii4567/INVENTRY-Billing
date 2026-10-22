@@ -122,7 +122,7 @@ export default function VehicleModal({ vehicle = null, token, onClose, onSuccess
                 {isEditing ? "Edit Vehicle Details" : "Register Fleet Vehicle"}
               </h4>
               <p style={{ fontSize: "0.75rem", color: "var(--text-muted)", margin: "2px 0 0 0" }}>
-                Chirag Combines FMCG distribution transport fleet
+                Distribution transport fleet management
               </p>
             </div>
           </div>

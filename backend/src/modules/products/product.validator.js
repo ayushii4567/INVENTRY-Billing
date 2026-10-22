@@ -1,6 +1,6 @@
 import { findProductBySku } from "./product.repository.js";
 
-const VALID_UNITS = ["PCS", "BOX", "CASE", "PACK", "KG", "GRAM", "LTR", "ML", "DOZEN"];
+const VALID_UNITS = ["PCS", "BOX", "CASE", "PACK", "KG", "GRAM", "LTR", "ML", "DOZEN", "NOS", "SET", "BAG", "PKT", "MTR"];
 const VALID_STATUSES = ["ACTIVE", "INACTIVE"];
 
 export const validateCreateProduct = async (data) => {

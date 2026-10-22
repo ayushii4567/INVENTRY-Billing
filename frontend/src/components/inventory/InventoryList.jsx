@@ -184,14 +184,15 @@ export default function InventoryList({
             <Search size={16} style={{ position: "absolute", left: "14px", top: "50%", transform: "translateY(-50%)", color: "var(--text-muted)" }} />
           </div>
 
-          {/* Company Brand Selector */}
+          {/* Stock Group Selector */}
           <div style={{ display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap" }}>
-            <span style={{ fontSize: "0.78rem", fontWeight: "700", color: "var(--text-muted)", textTransform: "uppercase" }}>Brand:</span>
+            <span style={{ fontSize: "0.78rem", fontWeight: "700", color: "var(--text-muted)", textTransform: "uppercase" }}>Stock Group:</span>
             {[
-              { id: "ALL", label: "All Brands" },
-              { id: "COMP-NESTLE", label: "Nestlé" },
-              { id: "COMP-PATANJALI", label: "Patanjali" },
-              { id: "COMP-GSK", label: "GSK" }
+              { id: "ALL", label: "All Groups" },
+              { id: "GRP-FINISHED", label: "Finished Goods" },
+              { id: "GRP-TRADING", label: "Trading Goods" },
+              { id: "GRP-RAW", label: "Raw Materials" },
+              { id: "GRP-CONSUMABLES", label: "Consumables" }
             ].map((co) => (
               <button
                 key={co.id}
@@ -288,83 +289,69 @@ export default function InventoryList({
             </p>
           </div>
         ) : (
-          <div style={{ overflowX: "auto" }}>
-            <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: "0.85rem" }}>
+          <div className="erp-table-container">
+            <table className="erp-table" style={{ minWidth: "1050px" }}>
               <thead>
-                <tr style={{
-                  background: "var(--table-header-bg)",
-                  borderBottom: "1px solid var(--border-color)",
-                  color: "var(--text-muted)",
-                  fontSize: "0.75rem",
-                  fontWeight: "700",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.03em"
-                }}>
-                  <th style={{ padding: "14px 18px" }}>Product Details</th>
-                  <th style={{ padding: "14px 18px" }}>Brand & Category</th>
-                  <th style={{ padding: "14px 18px", textAlign: "right" }}>Current Stock</th>
-                  <th style={{ padding: "14px 18px", textAlign: "right" }}>Available</th>
-                  <th style={{ padding: "14px 18px", textAlign: "right" }}>Min Stock</th>
-                  <th style={{ padding: "14px 18px", textAlign: "center" }}>Status</th>
-                  <th style={{ padding: "14px 18px" }}>Last Movement</th>
-                  <th style={{ padding: "14px 18px", textAlign: "center" }}>Actions</th>
+                <tr>
+                  <th style={{ minWidth: "220px", padding: "12px 14px" }}>Product Details</th>
+                  <th style={{ width: "160px", padding: "12px 14px" }}>Stock Group & Category</th>
+                  <th style={{ width: "130px", padding: "12px 14px", textAlign: "right" }}>Current Stock</th>
+                  <th style={{ width: "120px", padding: "12px 14px", textAlign: "right" }}>Available</th>
+                  <th style={{ width: "100px", padding: "12px 14px", textAlign: "right" }}>Min Stock</th>
+                  <th style={{ width: "120px", padding: "12px 14px", textAlign: "center" }}>Status</th>
+                  <th style={{ width: "130px", padding: "12px 14px" }}>Last Movement</th>
+                  <th style={{ width: "130px", padding: "12px 14px", textAlign: "center" }}>Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {inventory.map((item, idx) => (
+                {inventory.map((item) => (
                   <tr
                     key={item.id || item._id}
                     onClick={() => onSelectInventory && onSelectInventory(item)}
-                    style={{
-                      borderBottom: "1px solid var(--border-color)",
-                      background: idx % 2 === 0 ? "var(--bg-card)" : "var(--table-row-even)",
-                      cursor: "pointer",
-                      transition: "background 0.15s ease"
-                    }}
-                    onMouseEnter={(e) => e.currentTarget.style.background = "var(--bg-row-hover)"}
-                    onMouseLeave={(e) => e.currentTarget.style.background = idx % 2 === 0 ? "var(--bg-card)" : "var(--table-row-even)"}
+                    style={{ cursor: "pointer" }}
+                    className="table-row-hover"
                   >
                     {/* Product Name, SKU & Code */}
-                    <td style={{ padding: "14px 18px" }}>
-                      <div style={{ fontWeight: "800", color: "var(--text-main)", fontSize: "0.88rem" }}>
+                    <td style={{ padding: "11px 14px" }}>
+                      <div style={{ fontWeight: "600", color: "var(--text-main)", fontSize: "0.86rem" }}>
                         {item.productName}
                       </div>
-                      <div style={{ fontSize: "0.75rem", color: "var(--text-dim)", fontFamily: "monospace", marginTop: "2px" }}>
+                      <div style={{ fontSize: "0.75rem", color: "var(--text-dim)", fontFamily: "var(--font-mono)", marginTop: "2px", whiteSpace: "nowrap" }}>
                         {item.productCode} {item.sku ? `• ${item.sku}` : ""}
                       </div>
                     </td>
 
                     {/* Brand & Category */}
-                    <td style={{ padding: "14px 18px" }}>
-                      <div style={{ fontWeight: "700", color: "var(--text-main)" }}>{item.companyName}</div>
+                    <td style={{ padding: "11px 14px", whiteSpace: "nowrap" }}>
+                      <div style={{ fontWeight: "600", color: "var(--text-main)" }}>{item.companyName}</div>
                       <div style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>{item.category}</div>
                     </td>
 
                     {/* Current Stock */}
-                    <td style={{ padding: "14px 18px", textAlign: "right", fontFamily: "monospace", fontWeight: "800", color: "var(--text-main)", fontSize: "0.92rem" }}>
+                    <td style={{ padding: "11px 14px", textAlign: "right", fontFamily: "var(--font-mono)", fontWeight: "700", color: "var(--text-main)", fontSize: "0.90rem", whiteSpace: "nowrap" }}>
                       {(item.currentStock || 0).toLocaleString("en-IN")}{" "}
-                      <span style={{ fontSize: "0.75rem", fontWeight: "normal", color: "var(--text-muted)" }}>{item.unit || "Units"}</span>
+                      <span style={{ fontSize: "0.74rem", fontWeight: "normal", color: "var(--text-muted)" }}>{item.unit || "Units"}</span>
                     </td>
 
                     {/* Available Stock */}
-                    <td style={{ padding: "14px 18px", textAlign: "right", fontFamily: "monospace", fontWeight: "800", fontSize: "0.92rem" }}>
+                    <td style={{ padding: "11px 14px", textAlign: "right", fontFamily: "var(--font-mono)", fontWeight: "700", fontSize: "0.90rem", whiteSpace: "nowrap" }}>
                       <span style={{ color: item.availableStock <= 0 ? "#dc2626" : "#059669" }}>
                         {(item.availableStock || 0).toLocaleString("en-IN")}
                       </span>
                     </td>
 
                     {/* Minimum Stock */}
-                    <td style={{ padding: "14px 18px", textAlign: "right", fontFamily: "monospace", color: "var(--text-muted)", fontSize: "0.85rem" }}>
+                    <td style={{ padding: "11px 14px", textAlign: "right", fontFamily: "var(--font-mono)", color: "var(--text-muted)", fontSize: "0.84rem", whiteSpace: "nowrap" }}>
                       {item.minimumStock || 0}
                     </td>
 
                     {/* Status Badge */}
-                    <td style={{ padding: "14px 18px", textAlign: "center" }}>
+                    <td style={{ padding: "11px 14px", textAlign: "center", whiteSpace: "nowrap" }}>
                       <InventoryStatusBadge status={item.status} />
                     </td>
 
                     {/* Last Movement */}
-                    <td style={{ padding: "14px 18px", fontSize: "0.78rem", color: "var(--text-muted)", whiteSpace: "nowrap" }}>
+                    <td style={{ padding: "11px 14px", fontSize: "0.78rem", color: "var(--text-muted)", whiteSpace: "nowrap" }}>
                       {item.lastMovementAt ? new Date(item.lastMovementAt).toLocaleDateString("en-IN", {
                         day: "2-digit",
                         month: "short",
@@ -373,24 +360,24 @@ export default function InventoryList({
                     </td>
 
                     {/* Actions */}
-                    <td style={{ padding: "14px 18px", textAlign: "center" }} onClick={(e) => e.stopPropagation()}>
+                    <td style={{ padding: "11px 14px", textAlign: "center", whiteSpace: "nowrap" }} onClick={(e) => e.stopPropagation()}>
                       <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "6px" }}>
                         <button
                           onClick={() => onSelectInventory && onSelectInventory(item)}
                           title="View Details"
                           style={{
-                            background: "transparent",
+                            background: "var(--bg-input)",
                             border: "1px solid var(--border-card)",
                             color: "var(--text-muted)",
-                            padding: "6px",
-                            borderRadius: "8px",
+                            padding: "5px 8px",
+                            borderRadius: "7px",
                             cursor: "pointer",
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "center"
                           }}
                         >
-                          <Eye size={15} />
+                          <Eye size={14} />
                         </button>
 
                         {canAdjustStock && (
@@ -401,10 +388,10 @@ export default function InventoryList({
                               background: "rgba(99, 102, 241, 0.1)",
                               border: "1px solid rgba(99, 102, 241, 0.25)",
                               color: "var(--primary-600)",
-                              padding: "4px 10px",
-                              borderRadius: "8px",
-                              fontSize: "0.75rem",
-                              fontWeight: "700",
+                              padding: "4px 8px",
+                              borderRadius: "7px",
+                              fontSize: "0.74rem",
+                              fontWeight: "600",
                               cursor: "pointer",
                               display: "flex",
                               alignItems: "center",

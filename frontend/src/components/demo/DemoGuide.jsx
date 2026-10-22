@@ -191,7 +191,7 @@ export default function DemoGuide({ onNavigateTab, onClose, isModal = false }) {
         </div>
 
         <p style={{ color: "var(--text-muted)", fontSize: "0.95rem", maxWidth: "800px", lineHeight: 1.6, margin: "12px 0 0 0" }}>
-          This guided tour demonstrates how Chirag Combines manages its complete distribution network across <strong style={{ color: "var(--text-main)" }}>Nestlé, Patanjali & GSK</strong>:
+          This guided tour demonstrates how Distributor ERP manages its complete distribution network across <strong style={{ color: "var(--text-main)" }}>Nestlé, Patanjali & GSK</strong>:
           from Salesman Order Booking in the field to Billing, Payment Collections, Exception Surveillance and Owner Business Control.
         </p>
 

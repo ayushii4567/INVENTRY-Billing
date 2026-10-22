@@ -120,7 +120,7 @@ const orderCustomerSnapshotSchema = new mongoose.Schema(
     },
     mobile: {
       type: String,
-      required: true
+      default: ""
     },
     address: {
       type: String,

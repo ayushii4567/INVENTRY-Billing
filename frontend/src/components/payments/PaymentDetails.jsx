@@ -328,7 +328,7 @@ export default function PaymentDetails({
               Official Payment Voucher
             </div>
             <h1 style={{ fontSize: "1.5rem", fontWeight: "900", color: "var(--text-main)", margin: "0 0 4px 0" }}>
-              CHIRAG COMBINES FMCG
+              DISTRIBUTOR ERP
             </h1>
             <p style={{ fontSize: "0.82rem", color: "var(--text-muted)", margin: 0 }}>
               Industrial Area Phase II, Indore • Phone: +91 98260 12345 • Authorized Distributor
@@ -531,7 +531,7 @@ export default function PaymentDetails({
           </div>
           <div style={{ textAlign: "right" }}>
             <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", marginBottom: "40px" }}>
-              For <strong>CHIRAG COMBINES FMCG</strong>
+              For <strong>DISTRIBUTOR ERP</strong>
             </div>
             <div style={{ borderTop: "1px solid var(--border-color)", width: "160px", textAlign: "center", paddingTop: "4px", fontSize: "0.72rem", color: "var(--text-muted)" }}>
               Cashier / Finance Sign

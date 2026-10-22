@@ -201,34 +201,18 @@ export default function DeliveryTripList({ token, user, onSelectTrip, onOpenCrea
       </div>
 
       {/* Trips Table */}
-      <div className="glass-card" style={{ overflow: "hidden", borderRadius: "14px", border: "1px solid var(--border-color)" }}>
-        <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: "0.85rem" }}>
+      <div className="erp-table-container">
+        <table className="erp-table" style={{ minWidth: "1050px" }}>
           <thead>
-            <tr style={{ background: "var(--table-header-bg)", borderBottom: "1px solid var(--border-color)" }}>
-              <th style={{ padding: "14px 16px", fontWeight: "700", color: "var(--text-muted)", fontSize: "0.72rem", textTransform: "uppercase" }}>
-                Trip Number
-              </th>
-              <th style={{ padding: "14px 16px", fontWeight: "700", color: "var(--text-muted)", fontSize: "0.72rem", textTransform: "uppercase" }}>
-                Vehicle & Driver
-              </th>
-              <th style={{ padding: "14px 16px", fontWeight: "700", color: "var(--text-muted)", fontSize: "0.72rem", textTransform: "uppercase" }}>
-                Route / Beat
-              </th>
-              <th style={{ padding: "14px 16px", fontWeight: "700", color: "var(--text-muted)", fontSize: "0.72rem", textTransform: "uppercase" }}>
-                Date & Time
-              </th>
-              <th style={{ padding: "14px 16px", fontWeight: "700", color: "var(--text-muted)", fontSize: "0.72rem", textTransform: "uppercase" }}>
-                Deliveries Progress
-              </th>
-              <th style={{ padding: "14px 16px", fontWeight: "700", color: "var(--text-muted)", fontSize: "0.72rem", textTransform: "uppercase", textAlign: "right" }}>
-                Cargo Value
-              </th>
-              <th style={{ padding: "14px 16px", fontWeight: "700", color: "var(--text-muted)", fontSize: "0.72rem", textTransform: "uppercase", textAlign: "center" }}>
-                Status
-              </th>
-              <th style={{ padding: "14px 16px", fontWeight: "700", color: "var(--text-muted)", fontSize: "0.72rem", textTransform: "uppercase", textAlign: "right" }}>
-                Action
-              </th>
+            <tr>
+              <th style={{ minWidth: "140px" }}>Trip Number</th>
+              <th style={{ minWidth: "160px" }}>Vehicle & Driver</th>
+              <th style={{ minWidth: "150px" }}>Route / Beat</th>
+              <th style={{ minWidth: "140px" }}>Date & Time</th>
+              <th style={{ minWidth: "180px" }}>Deliveries Progress</th>
+              <th style={{ minWidth: "130px", textAlign: "right" }}>Cargo Value</th>
+              <th style={{ minWidth: "120px", textAlign: "center" }}>Status</th>
+              <th style={{ minWidth: "90px", textAlign: "right" }}>Action</th>
             </tr>
           </thead>
           <tbody>
@@ -263,15 +247,9 @@ export default function DeliveryTripList({ token, user, onSelectTrip, onOpenCrea
                 const percent = total > 0 ? Math.round((delivered / total) * 100) : 0;
 
                 return (
-                  <tr
-                    key={trip.id || trip.tripNumber}
-                    style={{
-                      borderBottom: "1px solid var(--border-color)",
-                      transition: "background 0.15s ease"
-                    }}
-                  >
-                    <td style={{ padding: "14px 16px" }}>
-                      <div style={{ fontWeight: "800", color: "var(--text-main)", fontFamily: "monospace" }}>
+                  <tr key={trip.id || trip.tripNumber}>
+                    <td style={{ padding: "11px 14px", whiteSpace: "nowrap" }}>
+                      <div style={{ fontWeight: "800", color: "var(--text-main)", fontFamily: "var(--font-mono, monospace)", fontSize: "0.85rem" }}>
                         {trip.tripNumber}
                       </div>
                       <div style={{ fontSize: "0.72rem", color: "var(--text-muted)" }}>
@@ -279,23 +257,23 @@ export default function DeliveryTripList({ token, user, onSelectTrip, onOpenCrea
                       </div>
                     </td>
 
-                    <td style={{ padding: "14px 16px" }}>
-                      <div style={{ fontWeight: "700", color: "var(--text-main)" }}>
+                    <td style={{ padding: "11px 14px" }}>
+                      <div style={{ fontWeight: "700", color: "var(--text-main)", whiteSpace: "nowrap" }}>
                         {trip.vehicleNumber}
                       </div>
-                      <div style={{ fontSize: "0.72rem", color: "var(--text-muted)" }}>
+                      <div style={{ fontSize: "0.72rem", color: "var(--text-muted)", whiteSpace: "nowrap" }}>
                         👤 {trip.driverName}
                       </div>
                     </td>
 
-                    <td style={{ padding: "14px 16px", color: "var(--text-muted)", fontSize: "0.8rem" }}>
+                    <td style={{ padding: "11px 14px", color: "var(--text-muted)", fontSize: "0.8rem", whiteSpace: "nowrap" }}>
                       <span style={{ display: "inline-flex", alignItems: "center", gap: "4px" }}>
                         <MapPin size={12} />
                         {trip.routeName || "Route Beat"}
                       </span>
                     </td>
 
-                    <td style={{ padding: "14px 16px", color: "var(--text-muted)", fontSize: "0.8rem" }}>
+                    <td style={{ padding: "11px 14px", color: "var(--text-muted)", fontSize: "0.8rem", whiteSpace: "nowrap" }}>
                       <div>{new Date(trip.tripDate).toLocaleDateString("en-IN")}</div>
                       {trip.dispatchTime && (
                         <div style={{ fontSize: "0.72rem", color: "#0ea5e9" }}>
@@ -304,7 +282,7 @@ export default function DeliveryTripList({ token, user, onSelectTrip, onOpenCrea
                       )}
                     </td>
 
-                    <td style={{ padding: "14px 16px", width: "170px" }}>
+                    <td style={{ padding: "11px 14px", width: "170px" }}>
                       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: "0.75rem", marginBottom: "4px" }}>
                         <span style={{ fontWeight: "700", color: "var(--text-main)" }}>
                           {delivered}/{total} Delivered
@@ -321,15 +299,15 @@ export default function DeliveryTripList({ token, user, onSelectTrip, onOpenCrea
                       </div>
                     </td>
 
-                    <td style={{ padding: "14px 16px", textAlign: "right", fontWeight: "800", color: "#34d399" }}>
+                    <td style={{ padding: "11px 14px", textAlign: "right", fontWeight: "800", color: "#34d399", whiteSpace: "nowrap", fontVariantNumeric: "tabular-nums" }}>
                       ₹{Number(trip.totalAmount || 0).toLocaleString("en-IN", { minimumFractionDigits: 2 })}
                     </td>
 
-                    <td style={{ padding: "14px 16px", textAlign: "center" }}>
+                    <td style={{ padding: "11px 14px", textAlign: "center", whiteSpace: "nowrap" }}>
                       <TripStatusBadge status={trip.status} />
                     </td>
 
-                    <td style={{ padding: "14px 16px", textAlign: "right" }}>
+                    <td style={{ padding: "11px 14px", textAlign: "right", whiteSpace: "nowrap" }}>
                       <button
                         onClick={() => onSelectTrip(trip)}
                         className="btn-secondary"

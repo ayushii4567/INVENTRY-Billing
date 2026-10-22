@@ -34,62 +34,50 @@ export default function SchemeList({ token, userRole = "SUPER_ADMIN" }) {
     {
       id: "scheme-001",
       schemeCode: "SCH-0001",
-      schemeName: "Maggi 12+1 Carton Deal",
+      schemeName: "Finished Goods Quantity Rebate 10+1",
       schemeType: "QUANTITY_FREE",
-      targetBrand: "Nestlé",
-      minQuantity: 12,
+      targetBrand: "Finished Goods",
+      minQuantity: 10,
       freeQuantity: 1,
       endDate: "2026-12-31",
       status: "ACTIVE",
-      description: "Buy 12 cartons of Maggi Noodles, get 1 carton free. Applies automatically on billing."
+      description: "Buy 10 units of standard finished goods, receive 1 bonus unit. Applied automatically on billing."
     },
     {
       id: "scheme-002",
       schemeCode: "SCH-0002",
-      schemeName: "Parle-G Wholesale Cash Slab",
+      schemeName: "Commercial Wholesale Cash Slab",
       schemeType: "PERCENTAGE_DISCOUNT",
-      targetBrand: "Parle",
-      discountPercent: 4.5,
-      minOrderValue: 5000,
+      targetBrand: "Trading Goods",
+      discountPercent: 5.0,
+      minOrderValue: 10000,
       endDate: "2026-12-31",
       status: "ACTIVE",
-      description: "4.5% instant cash discount on Parle biscuits for order value above ₹5,000."
+      description: "5.0% instant cash trade discount on commercial orders exceeding ₹10,000."
     },
     {
       id: "scheme-003",
       schemeCode: "SCH-0003",
-      schemeName: "Patanjali Special Festive Slab",
+      schemeName: "Standard Volume Incentive Slab",
       schemeType: "SLAB_DISCOUNT",
-      targetBrand: "Patanjali",
-      discountPercent: 6.0,
-      minOrderValue: 12000,
-      endDate: "2026-11-30",
+      targetBrand: "All Groups",
+      discountPercent: 7.5,
+      minOrderValue: 25000,
+      endDate: "2026-12-31",
       status: "ACTIVE",
-      description: "6.0% invoice trade discount for total order value exceeding ₹12,000."
+      description: "7.5% invoice trade discount for total invoice valuation exceeding ₹25,000."
     },
     {
       id: "scheme-004",
       schemeCode: "SCH-0004",
-      schemeName: "Fortune Oil Bulk Incentive",
+      schemeName: "Raw Materials Bulk Procurement Discount",
       schemeType: "PERCENTAGE_DISCOUNT",
-      targetBrand: "Fortune",
-      discountPercent: 3.0,
-      minOrderValue: 8000,
-      endDate: "2026-10-31",
-      status: "ACTIVE",
-      description: "3% discount on ordering 20+ tins of Fortune Refined Sunflower/Mustard Oil."
-    },
-    {
-      id: "scheme-005",
-      schemeCode: "SCH-0005",
-      schemeName: "Amul Butter Monsoon Bonanza",
-      schemeType: "QUANTITY_FREE",
-      targetBrand: "Amul",
-      minQuantity: 24,
-      freeQuantity: 2,
+      targetBrand: "Raw Materials",
+      discountPercent: 3.5,
+      minOrderValue: 15000,
       endDate: "2026-12-31",
       status: "ACTIVE",
-      description: "Order 24 units of Amul Butter 500g and receive 2 complimentary promotional units."
+      description: "3.5% trade discount on bulk inward orders of industrial raw materials."
     }
   ];
 

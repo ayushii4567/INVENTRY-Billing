@@ -281,11 +281,11 @@ export default function ReadyForDispatch({ token, user, onTripCreated, onViewTri
       </div>
 
       {/* Bills Table */}
-      <div className="glass-card" style={{ overflow: "hidden", borderRadius: "14px", border: "1px solid var(--border-color)" }}>
-        <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: "0.85rem" }}>
+      <div className="erp-table-container">
+        <table className="erp-table" style={{ minWidth: "1050px" }}>
           <thead>
-            <tr style={{ background: "var(--table-header-bg)", borderBottom: "1px solid var(--border-color)" }}>
-              <th style={{ padding: "14px 16px", width: "40px" }}>
+            <tr>
+              <th style={{ width: "42px", minWidth: "42px", padding: "12px 10px" }}>
                 <input
                   type="checkbox"
                   checked={isAllSelected}
@@ -293,27 +293,13 @@ export default function ReadyForDispatch({ token, user, onTripCreated, onViewTri
                   style={{ cursor: "pointer" }}
                 />
               </th>
-              <th style={{ padding: "14px 16px", fontWeight: "700", color: "var(--text-muted)", textTransform: "uppercase", fontSize: "0.72rem" }}>
-                Invoice #
-              </th>
-              <th style={{ padding: "14px 16px", fontWeight: "700", color: "var(--text-muted)", textTransform: "uppercase", fontSize: "0.72rem" }}>
-                Customer / Retail Outlet
-              </th>
-              <th style={{ padding: "14px 16px", fontWeight: "700", color: "var(--text-muted)", textTransform: "uppercase", fontSize: "0.72rem" }}>
-                Route / Beat
-              </th>
-              <th style={{ padding: "14px 16px", fontWeight: "700", color: "var(--text-muted)", textTransform: "uppercase", fontSize: "0.72rem" }}>
-                Bill Date
-              </th>
-              <th style={{ padding: "14px 16px", fontWeight: "700", color: "var(--text-muted)", textTransform: "uppercase", fontSize: "0.72rem", textAlign: "right" }}>
-                Amount
-              </th>
-              <th style={{ padding: "14px 16px", fontWeight: "700", color: "var(--text-muted)", textTransform: "uppercase", fontSize: "0.72rem", textAlign: "center" }}>
-                Payment
-              </th>
-              <th style={{ padding: "14px 16px", fontWeight: "700", color: "var(--text-muted)", textTransform: "uppercase", fontSize: "0.72rem", textAlign: "right" }}>
-                Action
-              </th>
+              <th style={{ minWidth: "140px" }}>Invoice #</th>
+              <th style={{ minWidth: "220px" }}>Customer / Retail Outlet</th>
+              <th style={{ minWidth: "140px" }}>Route / Beat</th>
+              <th style={{ minWidth: "120px" }}>Bill Date</th>
+              <th style={{ minWidth: "120px", textAlign: "right" }}>Amount</th>
+              <th style={{ minWidth: "110px", textAlign: "center" }}>Payment</th>
+              <th style={{ minWidth: "110px", textAlign: "right" }}>Action</th>
             </tr>
           </thead>
           <tbody>
@@ -347,12 +333,10 @@ export default function ReadyForDispatch({ token, user, onTripCreated, onViewTri
                   <tr
                     key={bId}
                     style={{
-                      borderBottom: "1px solid var(--border-color)",
-                      background: isSelected ? "rgba(99, 102, 241, 0.05)" : "transparent",
-                      transition: "background 0.15s ease"
+                      background: isSelected ? "rgba(99, 102, 241, 0.08)" : undefined
                     }}
                   >
-                    <td style={{ padding: "14px 16px" }}>
+                    <td style={{ padding: "11px 10px", width: "42px" }}>
                       <input
                         type="checkbox"
                         checked={isSelected}
@@ -360,35 +344,35 @@ export default function ReadyForDispatch({ token, user, onTripCreated, onViewTri
                         style={{ cursor: "pointer" }}
                       />
                     </td>
-                    <td style={{ padding: "14px 16px" }}>
-                      <div style={{ fontWeight: "700", color: "var(--primary-400)", fontFamily: "monospace" }}>
+                    <td style={{ padding: "11px 14px", whiteSpace: "nowrap" }}>
+                      <div style={{ fontWeight: "700", color: "var(--primary-400)", fontFamily: "var(--font-mono, monospace)", fontSize: "0.85rem" }}>
                         {b.billNumber}
                       </div>
                       <div style={{ fontSize: "0.72rem", color: "var(--text-muted)" }}>
                         Ref: {b.orderNumber}
                       </div>
                     </td>
-                    <td style={{ padding: "14px 16px" }}>
-                      <div style={{ fontWeight: "700", color: "var(--text-main)" }}>
+                    <td style={{ padding: "11px 14px" }}>
+                      <div style={{ fontWeight: "700", color: "var(--text-main)", whiteSpace: "nowrap" }}>
                         {b.customer?.customerName || "Customer"}
                       </div>
-                      <div style={{ fontSize: "0.72rem", color: "var(--text-muted)" }}>
+                      <div style={{ fontSize: "0.72rem", color: "var(--text-muted)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", maxWidth: "240px" }}>
                         {b.customer?.address || "Address"}
                       </div>
                     </td>
-                    <td style={{ padding: "14px 16px", color: "var(--text-muted)", fontSize: "0.8rem" }}>
+                    <td style={{ padding: "11px 14px", color: "var(--text-muted)", fontSize: "0.8rem", whiteSpace: "nowrap" }}>
                       <span style={{ display: "inline-flex", alignItems: "center", gap: "4px" }}>
                         <MapPin size={12} />
                         {b.customer?.routeName || "Route A"}
                       </span>
                     </td>
-                    <td style={{ padding: "14px 16px", color: "var(--text-muted)", fontSize: "0.8rem" }}>
+                    <td style={{ padding: "11px 14px", color: "var(--text-muted)", fontSize: "0.8rem", whiteSpace: "nowrap" }}>
                       {b.billDate ? new Date(b.billDate).toLocaleDateString("en-IN") : "—"}
                     </td>
-                    <td style={{ padding: "14px 16px", textAlign: "right", fontWeight: "800", color: "#34d399" }}>
+                    <td style={{ padding: "11px 14px", textAlign: "right", fontWeight: "800", color: "#34d399", whiteSpace: "nowrap", fontVariantNumeric: "tabular-nums" }}>
                       ₹{Number(b.totalAmount || 0).toLocaleString("en-IN", { minimumFractionDigits: 2 })}
                     </td>
-                    <td style={{ padding: "14px 16px", textAlign: "center" }}>
+                    <td style={{ padding: "11px 14px", textAlign: "center", whiteSpace: "nowrap" }}>
                       <span style={{
                         padding: "2px 8px",
                         borderRadius: "12px",
@@ -400,7 +384,7 @@ export default function ReadyForDispatch({ token, user, onTripCreated, onViewTri
                         {b.paymentStatus || "UNPAID"}
                       </span>
                     </td>
-                    <td style={{ padding: "14px 16px", textAlign: "right" }}>
+                    <td style={{ padding: "11px 14px", textAlign: "right", whiteSpace: "nowrap" }}>
                       <button
                         onClick={() => {
                           setSelectedBillIds([bId]);

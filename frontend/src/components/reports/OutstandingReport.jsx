@@ -88,62 +88,56 @@ export default function OutstandingReport({ data }) {
           </span>
         </div>
 
-        <div style={{ overflowX: "auto" }}>
-          <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: "0.82rem" }}>
+        <div className="erp-table-container">
+          <table className="erp-table" style={{ minWidth: "850px" }}>
             <thead>
-              <tr style={{ borderBottom: "1px solid var(--border-card)", color: "var(--text-muted)" }}>
-                <th style={{ padding: "10px 12px", fontWeight: "700" }}>Rank</th>
-                <th style={{ padding: "10px 12px", fontWeight: "700" }}>Retailer Name</th>
-                <th style={{ padding: "10px 12px", fontWeight: "700" }}>Route / Salesman</th>
-                <th style={{ padding: "10px 12px", fontWeight: "700" }}>Outstanding</th>
-                <th style={{ padding: "10px 12px", fontWeight: "700" }}>Overdue Days</th>
-                <th style={{ padding: "10px 12px", fontWeight: "700" }}>Credit Limit</th>
-                <th style={{ padding: "10px 12px", fontWeight: "700" }}>Status</th>
+              <tr>
+                <th style={{ minWidth: "60px" }}>Rank</th>
+                <th style={{ minWidth: "200px" }}>Retailer Name</th>
+                <th style={{ minWidth: "160px" }}>Route / Salesman</th>
+                <th style={{ minWidth: "130px", textAlign: "right" }}>Outstanding</th>
+                <th style={{ minWidth: "120px" }}>Overdue Days</th>
+                <th style={{ minWidth: "120px", textAlign: "right" }}>Credit Limit</th>
+                <th style={{ minWidth: "130px", textAlign: "center" }}>Status</th>
               </tr>
             </thead>
             <tbody>
               {criticalCustomers.map((c) => (
-                <tr
-                  key={c.rank}
-                  style={{
-                    borderBottom: "1px solid var(--border-card)",
-                    transition: "background 0.15s ease"
-                  }}
-                >
-                  <td style={{ padding: "12px", fontWeight: "800", color: "var(--text-muted)" }}>
+                <tr key={c.rank}>
+                  <td style={{ padding: "11px 14px", fontWeight: "800", color: "var(--text-muted)", whiteSpace: "nowrap" }}>
                     #{c.rank}
                   </td>
-                  <td style={{ padding: "12px" }}>
-                    <div style={{ fontWeight: "700", color: "var(--text-main)" }}>{c.name}</div>
-                    <div style={{ fontSize: "0.72rem", color: "var(--text-muted)" }}>{c.code} • {c.phone}</div>
+                  <td style={{ padding: "11px 14px" }}>
+                    <div style={{ fontWeight: "700", color: "var(--text-main)", whiteSpace: "nowrap" }}>{c.name}</div>
+                    <div style={{ fontSize: "0.72rem", color: "var(--text-muted)", whiteSpace: "nowrap" }}>{c.code} • {c.phone}</div>
                   </td>
-                  <td style={{ padding: "12px" }}>
+                  <td style={{ padding: "11px 14px", whiteSpace: "nowrap" }}>
                     <div style={{ color: "var(--text-main)", fontWeight: "600" }}>{c.route}</div>
                     <div style={{ fontSize: "0.72rem", color: "var(--text-muted)" }}>Salesman: {c.salesman}</div>
                   </td>
-                  <td style={{ padding: "12px", fontWeight: "900", color: "#ef4444" }}>
+                  <td style={{ padding: "11px 14px", fontWeight: "800", color: "#ef4444", textAlign: "right", whiteSpace: "nowrap", fontVariantNumeric: "tabular-nums" }}>
                     {formatCurrency(c.outstanding)}
                   </td>
-                  <td style={{ padding: "12px" }}>
+                  <td style={{ padding: "11px 14px", whiteSpace: "nowrap" }}>
                     <span style={{
                       background: "rgba(239, 68, 68, 0.15)",
                       color: "#ef4444",
-                      padding: "4px 8px",
+                      padding: "3px 8px",
                       borderRadius: "6px",
                       fontWeight: "700",
-                      fontSize: "0.78rem"
+                      fontSize: "0.75rem"
                     }}>
                       {c.overdueDays} Days
                     </span>
                   </td>
-                  <td style={{ padding: "12px", color: "var(--text-muted)", fontWeight: "600" }}>
+                  <td style={{ padding: "11px 14px", color: "var(--text-muted)", fontWeight: "600", textAlign: "right", whiteSpace: "nowrap", fontVariantNumeric: "tabular-nums" }}>
                     {formatCurrency(c.creditLimit)}
                   </td>
-                  <td style={{ padding: "12px" }}>
+                  <td style={{ padding: "11px 14px", textAlign: "center", whiteSpace: "nowrap" }}>
                     <span style={{
                       background: c.status === "SEVERE_OVERDUE" ? "rgba(185, 28, 28, 0.2)" : "rgba(239, 68, 68, 0.12)",
                       color: c.status === "SEVERE_OVERDUE" ? "#b91c1c" : "#ef4444",
-                      padding: "4px 10px",
+                      padding: "3px 8px",
                       borderRadius: "8px",
                       fontWeight: "700",
                       fontSize: "0.72rem"

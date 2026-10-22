@@ -3,6 +3,7 @@ import {
   getBills,
   getBillById,
   generateBill,
+  createDirectBill,
   lockBill,
   cancelBill,
   getOpenBillsForCustomer
@@ -15,6 +16,18 @@ router.use(verifyToken);
 
 // List invoices (Salesman scoped, Owner/Admin/Finance/SalesMgr view all)
 router.get("/", getBills);
+
+// Direct F8 Sales Invoice Creation (Owner, Admin, Finance, Sales Manager)
+router.post(
+  "/",
+  requireRole("SUPER_ADMIN", "ADMIN", "FINANCE", "SALES_MANAGER"),
+  createDirectBill
+);
+router.post(
+  "/direct",
+  requireRole("SUPER_ADMIN", "ADMIN", "FINANCE", "SALES_MANAGER"),
+  createDirectBill
+);
 
 // Open invoices for a customer (for payment mapping)
 router.get("/customer/:customerId/open", getOpenBillsForCustomer);

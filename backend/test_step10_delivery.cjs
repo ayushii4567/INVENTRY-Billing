@@ -1,6 +1,6 @@
 /**
  * Step 10: Dispatch & Delivery Management Engine Test Suite
- * Automated Verification for Chirag Combines FMCG Distributor ERP
+ * Automated Verification for Distributor ERP
  */
 
 const http = require("http");

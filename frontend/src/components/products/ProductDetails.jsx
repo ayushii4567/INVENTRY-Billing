@@ -33,16 +33,22 @@ export default function ProductDetails({
   const isActive = product.status === "ACTIVE";
 
   const getCompanyBadge = (companyId, companyName) => {
-    if (companyId === "COMP-NESTLE") {
+    const id = (companyId || "").toUpperCase();
+    const name = (companyName || "").toUpperCase();
+
+    if (id.includes("FINISHED") || name.includes("FINISHED")) {
       return { bg: "rgba(59, 130, 246, 0.15)", color: "#60a5fa", border: "rgba(59, 130, 246, 0.3)" };
     }
-    if (companyId === "COMP-PATANJALI") {
+    if (id.includes("TRADING") || name.includes("TRADING")) {
       return { bg: "rgba(16, 185, 129, 0.15)", color: "#34d399", border: "rgba(16, 185, 129, 0.3)" };
     }
-    if (companyId === "COMP-GSK") {
+    if (id.includes("RAW") || name.includes("RAW")) {
+      return { bg: "rgba(245, 158, 11, 0.15)", color: "#fbbf24", border: "rgba(245, 158, 11, 0.3)" };
+    }
+    if (id.includes("CONSUMABLE") || name.includes("CONSUMABLE")) {
       return { bg: "rgba(168, 85, 247, 0.15)", color: "#c084fc", border: "rgba(168, 85, 247, 0.3)" };
     }
-    return { bg: "rgba(245, 158, 11, 0.15)", color: "#fbbf24", border: "rgba(245, 158, 11, 0.3)" };
+    return { bg: "rgba(14, 165, 233, 0.15)", color: "#38bdf8", border: "rgba(14, 165, 233, 0.3)" };
   };
 
   const companyStyle = getCompanyBadge(product.companyId, product.companyName);
@@ -188,6 +194,8 @@ export default function ProductDetails({
                 </span>
                 <span>•</span>
                 <span style={{ fontFamily: "monospace" }}>SKU: {product.sku}</span>
+                <span>•</span>
+                <span style={{ fontFamily: "monospace", color: "var(--text-main)" }}>HSN: {product.hsnCode || "84713010"}</span>
                 <span>•</span>
                 <span>Category: {product.category}</span>
                 {product.subcategory && (

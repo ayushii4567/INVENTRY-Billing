@@ -38,7 +38,9 @@ export const findPayments = async ({
   search = "",
   status = "ALL",
   paymentMode = "ALL",
+  paymentType = "ALL",
   customerId = null,
+  supplierId = null,
   salesmanId = null
 } = {}) => {
   const skip = (page - 1) * limit;
@@ -54,8 +56,16 @@ export const findPayments = async ({
       query.paymentMode = paymentMode;
     }
 
+    if (paymentType && paymentType !== "ALL") {
+      query.paymentType = paymentType;
+    }
+
     if (customerId) {
       query.customerId = customerId;
+    }
+
+    if (supplierId) {
+      query.supplierId = supplierId;
     }
 
     if (salesmanId) {
@@ -70,6 +80,7 @@ export const findPayments = async ({
           { paymentNumber: regex },
           { customerName: regex },
           { customerCode: regex },
+          { supplierName: regex },
           { payerName: regex },
           { upiReference: regex },
           { chequeNumber: regex },
@@ -102,8 +113,16 @@ export const findPayments = async ({
     filtered = filtered.filter((p) => p.paymentMode === paymentMode);
   }
 
+  if (paymentType && paymentType !== "ALL") {
+    filtered = filtered.filter((p) => (p.paymentType || "CUSTOMER_RECEIPT") === paymentType);
+  }
+
   if (customerId) {
     filtered = filtered.filter((p) => p.customerId === customerId);
+  }
+
+  if (supplierId) {
+    filtered = filtered.filter((p) => p.supplierId === supplierId);
   }
 
   if (salesmanId) {
@@ -157,11 +176,17 @@ export const findUnmatchedPayments = async () => {
   return inMemoryPayments.filter((p) => p.status === "UNMATCHED");
 };
 
-export const createPaymentRecord = async (paymentData) => {
+export const createPaymentRecord = async (paymentData, user = { name: "System" }) => {
   if (isDatabaseConnected()) {
     const doc = new Payment(paymentData);
     const saved = await doc.save();
-    return { ...saved.toObject(), id: saved._id.toString() };
+    const res = { ...saved.toObject(), id: saved._id.toString() };
+    if (paymentData.billMappings && paymentData.billMappings.length > 0) {
+      try {
+        await mapPaymentToBills(res.id, paymentData.billMappings, user);
+      } catch (e) {}
+    }
+    return res;
   }
 
   const paymentNumber = paymentData.paymentNumber || (await generatePaymentNumber());
@@ -180,6 +205,11 @@ export const createPaymentRecord = async (paymentData) => {
   };
 
   inMemoryPayments.unshift(newPayment);
+  if (paymentData.billMappings && paymentData.billMappings.length > 0) {
+    try {
+      await mapPaymentToBills(newPayment.id, paymentData.billMappings, user);
+    } catch (e) {}
+  }
   return newPayment;
 };
 
@@ -290,32 +320,77 @@ export const cancelPaymentRecord = async (id, reason, user) => {
   const cancelTime = new Date().toISOString();
 
   if (isDatabaseConnected()) {
-    const updated = await Payment.findByIdAndUpdate(
-      id,
-      {
-        status: "CANCELLED",
-        cancelReason: reason,
-        cancelledBy: `${user.name} (${user.role})`,
-        cancelledAt: cancelTime,
-        updatedBy: user.name
-      },
-      { new: true }
-    ).lean();
+    const payment = await Payment.findById(id) || await Payment.findOne({ paymentNumber: id });
+    if (payment) {
+      // Revert mapped bills
+      if (payment.billMappings && payment.billMappings.length > 0) {
+        try {
+          const { revertPaymentFromBill } = await import("../billing/billing.repository.js");
+          for (const mapping of payment.billMappings) {
+            await revertPaymentFromBill(mapping.billId || mapping.billNumber, mapping.allocatedAmount, user);
+          }
+        } catch (e) {
+          console.warn("[Payment Repository] Bill balance restoration note:", e.message);
+        }
+      }
 
-    if (updated) {
-      return { ...updated, id: updated._id.toString() };
+      // Revert supplier balance if supplier payment
+      if (payment.paymentType === "SUPPLIER_PAYMENT" && payment.supplierId) {
+        try {
+          const { findSupplierById, updateSupplierRecord } = await import("../suppliers/supplier.repository.js");
+          const sup = await findSupplierById(payment.supplierId);
+          if (sup) {
+            const restoredBal = (Number(sup.currentBalance) || 0) + Number(payment.amount || 0);
+            await updateSupplierRecord(payment.supplierId, { currentBalance: restoredBal });
+          }
+        } catch (e) {}
+      }
+
+      payment.status = "CANCELLED";
+      payment.cancelReason = reason;
+      payment.cancelledBy = `${user?.name || "System"} (${user?.role || "User"})`;
+      payment.cancelledAt = cancelTime;
+      payment.updatedBy = user?.name || "System";
+      const saved = await payment.save();
+      return { ...saved.toObject(), id: saved._id.toString() };
     }
   }
 
   const idx = inMemoryPayments.findIndex((p) => p.id === id || p.paymentNumber === id);
   if (idx !== -1) {
+    const payment = inMemoryPayments[idx];
+
+    // Revert mapped bills in memory
+    if (payment.billMappings && payment.billMappings.length > 0) {
+      try {
+        const { revertPaymentFromBill } = await import("../billing/billing.repository.js");
+        for (const mapping of payment.billMappings) {
+          await revertPaymentFromBill(mapping.billId || mapping.billNumber, mapping.allocatedAmount, user);
+        }
+      } catch (e) {
+        console.warn("[Payment Repository] Memory bill balance restoration note:", e.message);
+      }
+    }
+
+    // Revert supplier balance if supplier payment
+    if (payment.paymentType === "SUPPLIER_PAYMENT" && payment.supplierId) {
+      try {
+        const { findSupplierById, updateSupplierRecord } = await import("../suppliers/supplier.repository.js");
+        const sup = await findSupplierById(payment.supplierId);
+        if (sup) {
+          const restoredBal = (Number(sup.currentBalance) || 0) + Number(payment.amount || 0);
+          await updateSupplierRecord(payment.supplierId, { currentBalance: restoredBal });
+        }
+      } catch (e) {}
+    }
+
     inMemoryPayments[idx] = {
-      ...inMemoryPayments[idx],
+      ...payment,
       status: "CANCELLED",
       cancelReason: reason,
-      cancelledBy: `${user.name} (${user.role})`,
+      cancelledBy: `${user?.name || "System"} (${user?.role || "User"})`,
       cancelledAt: cancelTime,
-      updatedBy: user.name,
+      updatedBy: user?.name || "System",
       updatedAt: cancelTime
     };
     return inMemoryPayments[idx];

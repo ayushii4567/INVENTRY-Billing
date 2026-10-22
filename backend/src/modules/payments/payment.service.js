@@ -18,7 +18,7 @@ import { findCustomerById } from "../customers/customer.repository.js";
 
 const round2 = (num) => Math.round((Number(num || 0) + Number.EPSILON) * 100) / 100;
 
-export const listPaymentsService = async ({ page, limit, search, status, paymentMode, user }) => {
+export const listPaymentsService = async ({ page, limit, search, status, paymentMode, paymentType = "ALL", supplierId = null, user }) => {
   let salesmanScope = null;
 
   if (user.role === "SALESMAN") {
@@ -31,6 +31,8 @@ export const listPaymentsService = async ({ page, limit, search, status, payment
     search,
     status,
     paymentMode,
+    paymentType,
+    supplierId,
     salesmanId: salesmanScope
   });
 };
@@ -145,12 +147,13 @@ export const recordPaymentService = async (payload, user) => {
     status: initialStatus,
     mappedAmount: 0,
     unmappedAmount: numAmount,
-    billMappings: [],
+    billMappings: payload.billMappings || [],
     notes: payload.notes || "",
     createdBy: `${user.name} (${user.role})`
   };
 
-  const created = await createPaymentRecord(paymentRecordData);
+  const created = await createPaymentRecord(paymentRecordData, user);
+
   return {
     success: true,
     statusCode: 201,

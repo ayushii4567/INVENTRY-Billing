@@ -1,10 +1,28 @@
 import {
   generateBillFromOrderService,
+  createDirectBillService,
   lockBillService,
   cancelBillService,
   getBillsService,
   getBillByIdService
 } from "./billing.service.js";
+
+export const createDirectBill = async (req, res) => {
+  try {
+    const bill = await createDirectBillService(req.body, req.user);
+    res.status(201).json({
+      success: true,
+      message: `Tax Invoice ${bill.billNumber} posted successfully. Stock and ledger updated.`,
+      data: bill
+    });
+  } catch (err) {
+    console.error("createDirectBill Controller Error:", err);
+    res.status(err.status || 500).json({
+      success: false,
+      message: err.message || "Failed to create direct billing invoice."
+    });
+  }
+};
 
 export const getBills = async (req, res) => {
   try {

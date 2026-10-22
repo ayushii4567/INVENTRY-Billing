@@ -17,6 +17,7 @@ import { BillStatusBadge, PaymentStatusBadge } from "./BillStatusBadge";
 import LockBillModal from "./LockBillModal";
 import CancelBillModal from "./CancelBillModal";
 import GenerateBillModal from "./GenerateBillModal";
+import DirectBillingModal from "./DirectBillingModal";
 
 export default function BillList({
   token,
@@ -42,6 +43,7 @@ export default function BillList({
   const [lockingBill, setLockingBill] = useState(null);
   const [cancellingBill, setCancellingBill] = useState(null);
   const [showGenerateModal, setShowGenerateModal] = useState(false);
+  const [showDirectModal, setShowDirectModal] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
 
   const canManageBills = ["SUPER_ADMIN", "ADMIN", "FINANCE", "SALES_MANAGER"].includes(user?.role);
@@ -285,27 +287,53 @@ export default function BillList({
         </div>
 
         {canManageBills && (
-          <button
-            onClick={() => setShowGenerateModal(true)}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-              background: "var(--primary-600)",
-              color: "#ffffff",
-              border: "none",
-              padding: "10px 18px",
-              borderRadius: "10px",
-              fontWeight: "700",
-              fontSize: "0.875rem",
-              cursor: "pointer",
-              boxShadow: "0 4px 14px rgba(99, 102, 241, 0.35)",
-              transition: "all 0.2s ease"
-            }}
-          >
-            <Plus size={18} />
-            <span>Generate Bill</span>
-          </button>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <button
+              onClick={() => setShowDirectModal(true)}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+                background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
+                color: "#ffffff",
+                border: "none",
+                padding: "10px 18px",
+                borderRadius: "10px",
+                fontWeight: "700",
+                fontSize: "0.875rem",
+                cursor: "pointer",
+                boxShadow: "0 4px 14px rgba(16, 185, 129, 0.35)",
+                transition: "all 0.2s ease"
+              }}
+              title="Create Direct Counter Invoice (F8)"
+            >
+              <Plus size={18} />
+              <span>Direct Invoice (F8)</span>
+            </button>
+
+            <button
+              onClick={() => setShowGenerateModal(true)}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+                background: "var(--primary-600)",
+                color: "#ffffff",
+                border: "none",
+                padding: "10px 18px",
+                borderRadius: "10px",
+                fontWeight: "700",
+                fontSize: "0.875rem",
+                cursor: "pointer",
+                boxShadow: "0 4px 14px rgba(99, 102, 241, 0.35)",
+                transition: "all 0.2s ease"
+              }}
+              title="Convert Sales Order into Tax Invoice"
+            >
+              <FileText size={18} />
+              <span>Bill from Order</span>
+            </button>
+          </div>
         )}
       </div>
 
@@ -430,51 +458,45 @@ export default function BillList({
       )}
 
       {/* Invoices Table Container */}
-      <div className="glass-card" style={{
-        borderRadius: "14px",
-        overflow: "hidden",
-        border: "1px solid var(--border-color)",
-        background: "var(--bg-surface)"
-      }}>
-        <div style={{ overflowX: "auto" }}>
-          <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left" }}>
-            <thead>
-              <tr style={{ background: "var(--table-header-bg)", borderBottom: "1px solid var(--border-color)" }}>
-                <th style={{ padding: "14px 18px", fontSize: "0.75rem", fontWeight: "700", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
-                  Invoice Number
-                </th>
-                <th style={{ padding: "14px 18px", fontSize: "0.75rem", fontWeight: "700", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
-                  Date
-                </th>
-                <th style={{ padding: "14px 18px", fontSize: "0.75rem", fontWeight: "700", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
-                  Customer
-                </th>
-                <th style={{ padding: "14px 18px", fontSize: "0.75rem", fontWeight: "700", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
-                  Salesman
-                </th>
-                <th style={{ padding: "14px 18px", fontSize: "0.75rem", fontWeight: "700", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em", textAlign: "center" }}>
-                  Items
-                </th>
-                <th style={{ padding: "14px 18px", fontSize: "0.75rem", fontWeight: "700", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em", textAlign: "right" }}>
-                  Total Amount
-                </th>
-                <th style={{ padding: "14px 18px", fontSize: "0.75rem", fontWeight: "700", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em", textAlign: "right" }}>
-                  Paid Amount
-                </th>
-                <th style={{ padding: "14px 18px", fontSize: "0.75rem", fontWeight: "700", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em", textAlign: "right" }}>
-                  Outstanding
-                </th>
-                <th style={{ padding: "14px 18px", fontSize: "0.75rem", fontWeight: "700", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
-                  Bill Status
-                </th>
-                <th style={{ padding: "14px 18px", fontSize: "0.75rem", fontWeight: "700", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
-                  Payment
-                </th>
-                <th style={{ padding: "14px 18px", fontSize: "0.75rem", fontWeight: "700", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em", textAlign: "right" }}>
-                  Actions
-                </th>
-              </tr>
-            </thead>
+      <div className="erp-table-container">
+        <table className="erp-table" style={{ minWidth: "1150px" }}>
+          <thead>
+            <tr>
+              <th style={{ width: "140px", padding: "12px 14px" }}>
+                Invoice Number
+              </th>
+              <th style={{ width: "110px", padding: "12px 14px" }}>
+                Date
+              </th>
+              <th style={{ minWidth: "200px", padding: "12px 14px" }}>
+                Customer
+              </th>
+              <th style={{ width: "150px", padding: "12px 14px" }}>
+                Salesman
+              </th>
+              <th style={{ width: "100px", padding: "12px 14px", textAlign: "center" }}>
+                Items
+              </th>
+              <th style={{ width: "120px", padding: "12px 14px", textAlign: "right" }}>
+                Total Amount
+              </th>
+              <th style={{ width: "110px", padding: "12px 14px", textAlign: "right" }}>
+                Paid Amount
+              </th>
+              <th style={{ width: "110px", padding: "12px 14px", textAlign: "right" }}>
+                Outstanding
+              </th>
+              <th style={{ width: "110px", padding: "12px 14px" }}>
+                Bill Status
+              </th>
+              <th style={{ width: "110px", padding: "12px 14px" }}>
+                Payment
+              </th>
+              <th style={{ width: "160px", padding: "12px 14px", textAlign: "right" }}>
+                Actions
+              </th>
+            </tr>
+          </thead>
             <tbody>
               {loading ? (
                 <tr>
@@ -525,7 +547,7 @@ export default function BillList({
                     }}
                   >
                     {/* Invoice Number */}
-                    <td style={{ padding: "16px 18px" }}>
+                    <td style={{ padding: "11px 14px" }}>
                       <div style={{ fontSize: "0.875rem", fontFamily: "monospace", fontWeight: "800", color: "var(--primary-400)" }}>
                         {b.billNumber}
                       </div>
@@ -544,7 +566,7 @@ export default function BillList({
                     </td>
 
                     {/* Customer */}
-                    <td style={{ padding: "16px 18px" }}>
+                    <td style={{ padding: "11px 14px" }}>
                       <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                         <div style={{
                           width: "30px",
@@ -571,7 +593,7 @@ export default function BillList({
                     </td>
 
                     {/* Salesman */}
-                    <td style={{ padding: "16px 18px" }}>
+                    <td style={{ padding: "11px 14px" }}>
                       <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
                         <UserCheck size={14} style={{ color: "var(--primary-400)" }} />
                         <span style={{ fontSize: "0.85rem", fontWeight: "600", color: "var(--text-main)" }}>
@@ -581,7 +603,7 @@ export default function BillList({
                     </td>
 
                     {/* Items */}
-                    <td style={{ padding: "16px 18px", textAlign: "center" }}>
+                    <td style={{ padding: "11px 14px", textAlign: "center", whiteSpace: "nowrap" }}>
                       <span style={{
                         padding: "3px 8px",
                         borderRadius: "10px",
@@ -596,36 +618,36 @@ export default function BillList({
                     </td>
 
                     {/* Total Amount */}
-                    <td style={{ padding: "16px 18px", textAlign: "right" }}>
-                      <strong style={{ fontSize: "0.95rem", color: "var(--text-main)" }}>
+                    <td style={{ padding: "11px 14px", textAlign: "right", fontVariantNumeric: "tabular-nums", whiteSpace: "nowrap" }}>
+                      <strong style={{ fontSize: "0.92rem", color: "var(--text-main)" }}>
                         {format(b.totalAmount)}
                       </strong>
                     </td>
 
                     {/* Paid Amount */}
-                    <td style={{ padding: "16px 18px", textAlign: "right", fontSize: "0.85rem", color: b.paidAmount > 0 ? "#10b981" : "var(--text-muted)", fontWeight: "600" }}>
+                    <td style={{ padding: "11px 14px", textAlign: "right", fontSize: "0.85rem", color: b.paidAmount > 0 ? "#10b981" : "var(--text-muted)", fontWeight: "600", fontVariantNumeric: "tabular-nums", whiteSpace: "nowrap" }}>
                       {format(b.paidAmount)}
                     </td>
 
                     {/* Outstanding */}
-                    <td style={{ padding: "16px 18px", textAlign: "right" }}>
-                      <strong style={{ fontSize: "0.95rem", color: b.outstandingAmount > 0 ? "#f87171" : "#10b981" }}>
+                    <td style={{ padding: "11px 14px", textAlign: "right", fontVariantNumeric: "tabular-nums", whiteSpace: "nowrap" }}>
+                      <strong style={{ fontSize: "0.92rem", color: b.outstandingAmount > 0 ? "#f87171" : "#10b981" }}>
                         {format(b.outstandingAmount)}
                       </strong>
                     </td>
 
                     {/* Bill Status */}
-                    <td style={{ padding: "16px 18px" }}>
+                    <td style={{ padding: "11px 14px", whiteSpace: "nowrap" }}>
                       <BillStatusBadge status={b.billStatus} />
                     </td>
 
                     {/* Payment Status */}
-                    <td style={{ padding: "16px 18px" }}>
+                    <td style={{ padding: "11px 14px", whiteSpace: "nowrap" }}>
                       <PaymentStatusBadge status={b.paymentStatus} />
                     </td>
 
                     {/* Actions */}
-                    <td style={{ padding: "16px 18px", textAlign: "right" }}>
+                    <td style={{ padding: "11px 14px", textAlign: "right", whiteSpace: "nowrap" }}>
                       <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: "6px" }}>
                         <button
                           onClick={() => onSelectBill(b)}
@@ -748,7 +770,6 @@ export default function BillList({
             </button>
           </div>
         </div>
-      </div>
 
       {/* Modals */}
       {lockingBill && (
@@ -776,6 +797,18 @@ export default function BillList({
           onClose={() => setShowGenerateModal(false)}
           onSuccess={(newBill, msg) => {
             showToast(msg || `Invoice ${newBill.billNumber} generated successfully!`);
+            fetchBills();
+          }}
+        />
+      )}
+
+      {showDirectModal && (
+        <DirectBillingModal
+          token={token}
+          user={user}
+          onClose={() => setShowDirectModal(false)}
+          onSuccess={(newBill, msg) => {
+            showToast(msg || `Direct Invoice ${newBill.billNumber} posted successfully!`);
             fetchBills();
           }}
         />

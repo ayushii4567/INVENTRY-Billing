@@ -394,7 +394,7 @@ export default function BillDetails({
               margin: "0 0 4px 0",
               letterSpacing: "-0.5px"
             }}>
-              CHIRAG COMBINES FMCG
+              DISTRIBUTOR ERP
             </h1>
             <p style={{ fontSize: "0.85rem", color: "var(--text-muted)", margin: 0 }}>
               Authorized FMCG Super Distributor & Wholesale Supply Engine
@@ -662,7 +662,7 @@ export default function BillDetails({
           </div>
           <div style={{ textAlign: "right" }}>
             <div style={{ fontSize: "0.78rem", color: "var(--text-muted)", marginBottom: "40px" }}>
-              For <strong>CHIRAG COMBINES FMCG</strong>
+              For <strong>DISTRIBUTOR ERP</strong>
             </div>
             <div style={{ borderTop: "1px solid var(--border-color)", width: "180px", textAlign: "center", paddingTop: "4px", fontSize: "0.75rem", color: "var(--text-muted)" }}>
               Authorized Signatory

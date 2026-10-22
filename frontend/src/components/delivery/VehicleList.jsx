@@ -196,32 +196,18 @@ export default function VehicleList({ token, user }) {
       </div>
 
       {/* Vehicles Table */}
-      <div className="glass-card" style={{ overflow: "hidden", borderRadius: "14px", border: "1px solid var(--border-color)" }}>
-        <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: "0.85rem" }}>
+      <div className="erp-table-container">
+        <table className="erp-table" style={{ minWidth: "950px" }}>
           <thead>
-            <tr style={{ background: "var(--table-header-bg)", borderBottom: "1px solid var(--border-color)" }}>
-              <th style={{ padding: "14px 16px", fontWeight: "700", color: "var(--text-muted)", fontSize: "0.72rem", textTransform: "uppercase" }}>
-                Vehicle Number
-              </th>
-              <th style={{ padding: "14px 16px", fontWeight: "700", color: "var(--text-muted)", fontSize: "0.72rem", textTransform: "uppercase" }}>
-                Type & Capacity
-              </th>
-              <th style={{ padding: "14px 16px", fontWeight: "700", color: "var(--text-muted)", fontSize: "0.72rem", textTransform: "uppercase" }}>
-                Primary Driver
-              </th>
-              <th style={{ padding: "14px 16px", fontWeight: "700", color: "var(--text-muted)", fontSize: "0.72rem", textTransform: "uppercase" }}>
-                Contact Number
-              </th>
-              <th style={{ padding: "14px 16px", fontWeight: "700", color: "var(--text-muted)", fontSize: "0.72rem", textTransform: "uppercase", textAlign: "center" }}>
-                Fleet Status
-              </th>
-              <th style={{ padding: "14px 16px", fontWeight: "700", color: "var(--text-muted)", fontSize: "0.72rem", textTransform: "uppercase" }}>
-                Active Route / Notes
-              </th>
+            <tr>
+              <th style={{ minWidth: "150px" }}>Vehicle Number</th>
+              <th style={{ minWidth: "140px" }}>Type & Capacity</th>
+              <th style={{ minWidth: "140px" }}>Primary Driver</th>
+              <th style={{ minWidth: "130px" }}>Contact Number</th>
+              <th style={{ minWidth: "110px", textAlign: "center" }}>Fleet Status</th>
+              <th style={{ minWidth: "160px" }}>Active Route / Notes</th>
               {canManageVehicles && (
-                <th style={{ padding: "14px 16px", fontWeight: "700", color: "var(--text-muted)", fontSize: "0.72rem", textTransform: "uppercase", textAlign: "right" }}>
-                  Action
-                </th>
+                <th style={{ minWidth: "90px", textAlign: "right" }}>Action</th>
               )}
             </tr>
           </thead>
@@ -241,9 +227,9 @@ export default function VehicleList({ token, user }) {
               </tr>
             ) : (
               vehicles.map((v) => (
-                <tr key={v.id || v.vehicleNumber} style={{ borderBottom: "1px solid var(--border-color)" }}>
-                  <td style={{ padding: "14px 16px" }}>
-                    <div style={{ fontWeight: "800", color: "var(--text-main)", fontFamily: "monospace", fontSize: "0.92rem" }}>
+                <tr key={v.id || v.vehicleNumber}>
+                  <td style={{ padding: "11px 14px", whiteSpace: "nowrap" }}>
+                    <div style={{ fontWeight: "800", color: "var(--text-main)", fontFamily: "var(--font-mono, monospace)", fontSize: "0.88rem" }}>
                       {v.vehicleNumber}
                     </div>
                     <div style={{ fontSize: "0.72rem", color: "var(--text-muted)" }}>
@@ -251,34 +237,34 @@ export default function VehicleList({ token, user }) {
                     </div>
                   </td>
 
-                  <td style={{ padding: "14px 16px" }}>
-                    <div style={{ fontWeight: "700", color: "var(--text-main)" }}>
+                  <td style={{ padding: "11px 14px" }}>
+                    <div style={{ fontWeight: "700", color: "var(--text-main)", whiteSpace: "nowrap" }}>
                       {v.vehicleType}
                     </div>
-                    <div style={{ fontSize: "0.72rem", color: "var(--text-muted)" }}>
+                    <div style={{ fontSize: "0.72rem", color: "var(--text-muted)", whiteSpace: "nowrap" }}>
                       Capacity: <strong>{v.capacity}</strong>
                     </div>
                   </td>
 
-                  <td style={{ padding: "14px 16px" }}>
+                  <td style={{ padding: "11px 14px", whiteSpace: "nowrap" }}>
                     <div style={{ fontWeight: "700", color: "var(--text-main)", display: "flex", alignItems: "center", gap: "6px" }}>
                       <User size={13} color="var(--primary-400)" />
                       <span>{v.driverName}</span>
                     </div>
                   </td>
 
-                  <td style={{ padding: "14px 16px", color: "var(--text-muted)" }}>
+                  <td style={{ padding: "11px 14px", color: "var(--text-muted)", whiteSpace: "nowrap", fontVariantNumeric: "tabular-nums" }}>
                     <span style={{ display: "inline-flex", alignItems: "center", gap: "4px" }}>
                       <Phone size={12} />
                       {v.driverMobile}
                     </span>
                   </td>
 
-                  <td style={{ padding: "14px 16px", textAlign: "center" }}>
+                  <td style={{ padding: "11px 14px", textAlign: "center", whiteSpace: "nowrap" }}>
                     <VehicleStatusBadge status={v.status} />
                   </td>
 
-                  <td style={{ padding: "14px 16px", fontSize: "0.8rem", color: "var(--text-muted)" }}>
+                  <td style={{ padding: "11px 14px", fontSize: "0.8rem", color: "var(--text-muted)" }}>
                     {v.status === "ON_TRIP" ? (
                       <span style={{ color: "var(--primary-400)", fontWeight: "700" }}>
                         🚚 En route on trip
@@ -291,7 +277,7 @@ export default function VehicleList({ token, user }) {
                   </td>
 
                   {canManageVehicles && (
-                    <td style={{ padding: "14px 16px", textAlign: "right" }}>
+                    <td style={{ padding: "11px 14px", textAlign: "right", whiteSpace: "nowrap" }}>
                       <button
                         onClick={() => setEditingVehicle(v)}
                         className="btn-secondary"

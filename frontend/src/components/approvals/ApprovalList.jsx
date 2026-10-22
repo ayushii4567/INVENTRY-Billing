@@ -131,18 +131,18 @@ export default function ApprovalList({ token, onSelectApproval, initialStatusFil
           <p style={{ fontSize: "0.82rem" }}>All pending approval requests have been reviewed.</p>
         </div>
       ) : (
-        <div style={{ overflowX: "auto" }}>
-          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.85rem" }}>
+        <div className="erp-table-container">
+          <table className="erp-table" style={{ minWidth: "980px" }}>
             <thead>
-              <tr style={{ borderBottom: "1px solid var(--border-card)", textAlign: "left", color: "var(--text-muted)" }}>
-                <th style={{ padding: "12px 14px", fontWeight: "700" }}>Approval # & Title</th>
-                <th style={{ padding: "12px 14px", fontWeight: "700" }}>Type</th>
-                <th style={{ padding: "12px 14px", fontWeight: "700" }}>Module</th>
-                <th style={{ padding: "12px 14px", fontWeight: "700" }}>Requested By</th>
-                <th style={{ padding: "12px 14px", fontWeight: "700" }}>Reason</th>
-                <th style={{ padding: "12px 14px", fontWeight: "700" }}>Submitted Date</th>
-                <th style={{ padding: "12px 14px", fontWeight: "700" }}>Status</th>
-                <th style={{ padding: "12px 14px", fontWeight: "700", textAlign: "right" }}>Action</th>
+              <tr>
+                <th style={{ minWidth: "180px" }}>Approval # & Title</th>
+                <th style={{ minWidth: "120px" }}>Type</th>
+                <th style={{ minWidth: "110px" }}>Module</th>
+                <th style={{ minWidth: "140px" }}>Requested By</th>
+                <th style={{ minWidth: "200px" }}>Reason</th>
+                <th style={{ minWidth: "130px" }}>Submitted Date</th>
+                <th style={{ minWidth: "110px" }}>Status</th>
+                <th style={{ minWidth: "90px", textAlign: "right" }}>Action</th>
               </tr>
             </thead>
             <tbody>
@@ -150,27 +150,24 @@ export default function ApprovalList({ token, onSelectApproval, initialStatusFil
                 <tr
                   key={apr.id || apr._id}
                   style={{
-                    borderBottom: "1px solid var(--border-card)",
-                    cursor: "pointer",
-                    transition: "background 0.15s ease"
+                    cursor: "pointer"
                   }}
-                  className="table-row-hover"
                   onClick={() => onSelectApproval(apr)}
                 >
-                  <td style={{ padding: "12px 14px" }}>
+                  <td style={{ padding: "11px 14px" }}>
                     <div style={{ fontWeight: "700", color: "var(--text-main)", marginBottom: "2px" }}>
                       {apr.title}
                     </div>
-                    <div style={{ fontSize: "0.75rem", color: "var(--primary-400)" }}>
+                    <div style={{ fontSize: "0.75rem", color: "var(--primary-400)", fontFamily: "var(--font-mono, monospace)" }}>
                       {apr.approvalNumber}
                     </div>
                   </td>
 
-                  <td style={{ padding: "12px 14px" }}>
+                  <td style={{ padding: "11px 14px", whiteSpace: "nowrap" }}>
                     <ApprovalTypeBadge type={apr.approvalType} />
                   </td>
 
-                  <td style={{ padding: "12px 14px" }}>
+                  <td style={{ padding: "11px 14px", whiteSpace: "nowrap" }}>
                     <span
                       style={{
                         padding: "2px 8px",
@@ -185,23 +182,23 @@ export default function ApprovalList({ token, onSelectApproval, initialStatusFil
                     </span>
                   </td>
 
-                  <td style={{ padding: "12px 14px", color: "var(--text-main)", fontWeight: "600" }}>
+                  <td style={{ padding: "11px 14px", color: "var(--text-main)", fontWeight: "600", whiteSpace: "nowrap" }}>
                     {apr.requestedByName}
                   </td>
 
-                  <td style={{ padding: "12px 14px", color: "var(--text-muted)", maxWidth: "250px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                  <td style={{ padding: "11px 14px", color: "var(--text-muted)", maxWidth: "250px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                     {apr.reason}
                   </td>
 
-                  <td style={{ padding: "12px 14px", color: "var(--text-muted)", fontSize: "0.8rem" }}>
+                  <td style={{ padding: "11px 14px", color: "var(--text-muted)", fontSize: "0.8rem", whiteSpace: "nowrap" }}>
                     {new Date(apr.requestedAt).toLocaleDateString("en-IN", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}
                   </td>
 
-                  <td style={{ padding: "12px 14px" }}>
+                  <td style={{ padding: "11px 14px", whiteSpace: "nowrap" }}>
                     <ApprovalStatusBadge status={apr.status} />
                   </td>
 
-                  <td style={{ padding: "12px 14px", textAlign: "right" }}>
+                  <td style={{ padding: "11px 14px", textAlign: "right", whiteSpace: "nowrap" }}>
                     <button
                       onClick={(e) => {
                         e.stopPropagation();

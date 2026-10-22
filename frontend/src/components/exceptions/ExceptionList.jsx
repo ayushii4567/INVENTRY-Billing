@@ -155,18 +155,18 @@ export default function ExceptionList({ token, onSelectException, initialSeverit
           <p style={{ fontSize: "0.82rem" }}>All business rules are within safe operating thresholds for selected filters.</p>
         </div>
       ) : (
-        <div style={{ overflowX: "auto" }}>
-          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.85rem" }}>
+        <div className="erp-table-container">
+          <table className="erp-table" style={{ minWidth: "1000px" }}>
             <thead>
-              <tr style={{ borderBottom: "1px solid var(--border-card)", textAlign: "left", color: "var(--text-muted)" }}>
-                <th style={{ padding: "12px 14px", fontWeight: "700" }}>Severity</th>
-                <th style={{ padding: "12px 14px", fontWeight: "700" }}>Issue Title & ID</th>
-                <th style={{ padding: "12px 14px", fontWeight: "700" }}>Module</th>
-                <th style={{ padding: "12px 14px", fontWeight: "700" }}>Party / Reference</th>
-                <th style={{ padding: "12px 14px", fontWeight: "700" }}>Exposure (₹)</th>
-                <th style={{ padding: "12px 14px", fontWeight: "700" }}>Detected</th>
-                <th style={{ padding: "12px 14px", fontWeight: "700" }}>Status</th>
-                <th style={{ padding: "12px 14px", fontWeight: "700", textAlign: "right" }}>Action</th>
+              <tr>
+                <th style={{ minWidth: "100px" }}>Severity</th>
+                <th style={{ minWidth: "180px" }}>Issue Title & ID</th>
+                <th style={{ minWidth: "110px" }}>Module</th>
+                <th style={{ minWidth: "170px" }}>Party / Reference</th>
+                <th style={{ minWidth: "130px", textAlign: "right" }}>Exposure</th>
+                <th style={{ minWidth: "130px" }}>Detected</th>
+                <th style={{ minWidth: "110px" }}>Status</th>
+                <th style={{ minWidth: "90px", textAlign: "right" }}>Action</th>
               </tr>
             </thead>
             <tbody>
@@ -174,27 +174,24 @@ export default function ExceptionList({ token, onSelectException, initialSeverit
                 <tr
                   key={exc.id || exc._id}
                   style={{
-                    borderBottom: "1px solid var(--border-card)",
-                    cursor: "pointer",
-                    transition: "background 0.15s ease"
+                    cursor: "pointer"
                   }}
-                  className="table-row-hover"
                   onClick={() => onSelectException(exc)}
                 >
-                  <td style={{ padding: "12px 14px" }}>
+                  <td style={{ padding: "11px 14px", whiteSpace: "nowrap" }}>
                     <ExceptionSeverityBadge severity={exc.severity} />
                   </td>
 
-                  <td style={{ padding: "12px 14px" }}>
-                    <div style={{ fontWeight: "700", color: "var(--text-main)", marginBottom: "2px" }}>
+                  <td style={{ padding: "11px 14px" }}>
+                    <div style={{ fontWeight: "700", color: "var(--text-main)", marginBottom: "2px", whiteSpace: "nowrap" }}>
                       {exc.title}
                     </div>
-                    <div style={{ fontSize: "0.75rem", color: "var(--primary-400)" }}>
+                    <div style={{ fontSize: "0.75rem", color: "var(--primary-400)", fontFamily: "var(--font-mono, monospace)" }}>
                       {exc.exceptionNumber}
                     </div>
                   </td>
 
-                  <td style={{ padding: "12px 14px" }}>
+                  <td style={{ padding: "11px 14px", whiteSpace: "nowrap" }}>
                     <span
                       style={{
                         padding: "2px 8px",
@@ -209,7 +206,7 @@ export default function ExceptionList({ token, onSelectException, initialSeverit
                     </span>
                   </td>
 
-                  <td style={{ padding: "12px 14px", color: "var(--text-main)" }}>
+                  <td style={{ padding: "11px 14px", color: "var(--text-main)", whiteSpace: "nowrap" }}>
                     {exc.customerName ? (
                       <div style={{ fontWeight: "600" }}>{exc.customerName}</div>
                     ) : exc.salesmanName ? (
@@ -221,19 +218,19 @@ export default function ExceptionList({ token, onSelectException, initialSeverit
                     )}
                   </td>
 
-                  <td style={{ padding: "12px 14px", fontWeight: "700", color: exc.amount > 0 ? "var(--text-main)" : "var(--text-muted)" }}>
+                  <td style={{ padding: "11px 14px", fontWeight: "700", textAlign: "right", whiteSpace: "nowrap", fontVariantNumeric: "tabular-nums", color: exc.amount > 0 ? "var(--text-main)" : "var(--text-muted)" }}>
                     {exc.amount > 0 ? `₹${exc.amount.toLocaleString("en-IN")}` : "—"}
                   </td>
 
-                  <td style={{ padding: "12px 14px", color: "var(--text-muted)", fontSize: "0.8rem" }}>
+                  <td style={{ padding: "11px 14px", color: "var(--text-muted)", fontSize: "0.8rem", whiteSpace: "nowrap" }}>
                     {new Date(exc.detectedAt).toLocaleDateString("en-IN", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}
                   </td>
 
-                  <td style={{ padding: "12px 14px" }}>
+                  <td style={{ padding: "11px 14px", whiteSpace: "nowrap" }}>
                     <ExceptionStatusBadge status={exc.status} />
                   </td>
 
-                  <td style={{ padding: "12px 14px", textAlign: "right" }}>
+                  <td style={{ padding: "11px 14px", textAlign: "right", whiteSpace: "nowrap" }}>
                     <button
                       onClick={(e) => {
                         e.stopPropagation();

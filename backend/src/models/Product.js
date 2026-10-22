@@ -44,10 +44,15 @@ const productSchema = new mongoose.Schema(
       trim: true,
       default: ""
     },
+    hsnCode: {
+      type: String,
+      trim: true,
+      default: "8471"
+    },
     unit: {
       type: String,
       required: [true, "Unit is required"],
-      enum: ["PCS", "BOX", "CASE", "PACK", "KG", "GRAM", "LTR", "ML", "DOZEN"],
+      enum: ["PCS", "BOX", "CASE", "PACK", "KG", "GRAM", "LTR", "ML", "DOZEN", "NOS", "SET", "BAG", "PKT", "MTR"],
       default: "PCS"
     },
     packSize: {

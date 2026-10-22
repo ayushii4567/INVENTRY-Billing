@@ -39,6 +39,7 @@ const stockMovementSchema = new mongoose.Schema(
         "ADJUSTMENT_IN",
         "ADJUSTMENT_OUT",
         "RETURN_IN",
+        "PURCHASE_IN",
         "DEMO_SEED"
       ],
       required: true,
@@ -59,7 +60,7 @@ const stockMovementSchema = new mongoose.Schema(
     },
     referenceType: {
       type: String,
-      enum: ["BILL", "ORDER", "MANUAL_ADJUSTMENT", "SYSTEM_SEED", "RETURN"],
+      enum: ["BILL", "ORDER", "MANUAL_ADJUSTMENT", "SYSTEM_SEED", "RETURN", "PURCHASE"],
       default: "SYSTEM_SEED"
     },
     referenceId: {

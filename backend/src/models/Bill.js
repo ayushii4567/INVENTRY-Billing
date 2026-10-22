@@ -110,7 +110,7 @@ const billCustomerSnapshotSchema = new mongoose.Schema(
     },
     mobile: {
       type: String,
-      required: true
+      default: ""
     },
     address: {
       type: String,
@@ -178,12 +178,12 @@ const billSchema = new mongoose.Schema(
     },
     orderId: {
       type: String,
-      required: [true, "Source order ID is required"],
+      default: "DIRECT",
       index: true
     },
     orderNumber: {
       type: String,
-      required: [true, "Source order number is required"],
+      default: "DIRECT-SALE",
       index: true
     },
     customer: {
@@ -192,7 +192,11 @@ const billSchema = new mongoose.Schema(
     },
     salesman: {
       type: billSalesmanSnapshotSchema,
-      required: true
+      default: () => ({
+        salesmanId: "user-owner-01",
+        salesmanCode: "OWNER-01",
+        salesmanName: "Direct Counter"
+      })
     },
     companyId: {
       type: String,
@@ -200,7 +204,7 @@ const billSchema = new mongoose.Schema(
     },
     companyName: {
       type: String,
-      default: "Chirag Combines FMCG"
+      default: "Distributor ERP"
     },
     items: {
       type: [billItemSchema],

@@ -51,31 +51,25 @@ export default function TopCustomersReport({ data }) {
       </div>
 
       {/* Top Customers Table */}
-      <div style={{ overflowX: "auto" }}>
-        <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: "0.82rem" }}>
+      <div className="erp-table-container">
+        <table className="erp-table" style={{ minWidth: "850px" }}>
           <thead>
-            <tr style={{ borderBottom: "1px solid var(--border-card)", color: "var(--text-muted)" }}>
-              <th style={{ padding: "10px 12px", fontWeight: "700" }}>Rank</th>
-              <th style={{ padding: "10px 12px", fontWeight: "700" }}>Retailer / Outlet</th>
-              <th style={{ padding: "10px 12px", fontWeight: "700" }}>Tier</th>
-              <th style={{ padding: "10px 12px", fontWeight: "700" }}>Gross Sales</th>
-              <th style={{ padding: "10px 12px", fontWeight: "700" }}>Total Collection</th>
-              <th style={{ padding: "10px 12px", fontWeight: "700" }}>Outstanding</th>
-              <th style={{ padding: "10px 12px", fontWeight: "700" }}>Status</th>
+            <tr>
+              <th style={{ minWidth: "60px" }}>Rank</th>
+              <th style={{ minWidth: "220px" }}>Retailer / Outlet</th>
+              <th style={{ minWidth: "100px" }}>Tier</th>
+              <th style={{ minWidth: "130px", textAlign: "right" }}>Gross Sales</th>
+              <th style={{ minWidth: "130px", textAlign: "right" }}>Total Collection</th>
+              <th style={{ minWidth: "130px", textAlign: "right" }}>Outstanding</th>
+              <th style={{ minWidth: "110px", textAlign: "center" }}>Status</th>
             </tr>
           </thead>
           <tbody>
             {customers.map((c) => {
               const tierStyle = getTierBadgeStyle(c.tier);
               return (
-                <tr
-                  key={c.rank}
-                  style={{
-                    borderBottom: "1px solid var(--border-card)",
-                    transition: "background 0.15s ease"
-                  }}
-                >
-                  <td style={{ padding: "14px 12px", fontWeight: "800" }}>
+                <tr key={c.rank}>
+                  <td style={{ padding: "11px 14px", fontWeight: "800", whiteSpace: "nowrap" }}>
                     <div style={{
                       width: "28px",
                       height: "28px",
@@ -90,15 +84,15 @@ export default function TopCustomersReport({ data }) {
                       #{c.rank}
                     </div>
                   </td>
-                  <td style={{ padding: "14px 12px" }}>
-                    <div style={{ fontWeight: "700", color: "var(--text-main)", fontSize: "0.9rem" }}>{c.name}</div>
-                    <div style={{ fontSize: "0.72rem", color: "var(--text-muted)" }}>{c.code} • {c.ordersCount} orders</div>
+                  <td style={{ padding: "11px 14px" }}>
+                    <div style={{ fontWeight: "700", color: "var(--text-main)", fontSize: "0.88rem", whiteSpace: "nowrap" }}>{c.name}</div>
+                    <div style={{ fontSize: "0.72rem", color: "var(--text-muted)", whiteSpace: "nowrap" }}>{c.code} • {c.ordersCount} orders</div>
                   </td>
-                  <td style={{ padding: "14px 12px" }}>
+                  <td style={{ padding: "11px 14px", whiteSpace: "nowrap" }}>
                     <span style={{
                       background: tierStyle.bg,
                       color: tierStyle.color,
-                      padding: "4px 8px",
+                      padding: "3px 8px",
                       borderRadius: "6px",
                       fontSize: "0.72rem",
                       fontWeight: "700"
@@ -106,20 +100,20 @@ export default function TopCustomersReport({ data }) {
                       {c.tier}
                     </span>
                   </td>
-                  <td style={{ padding: "14px 12px", fontWeight: "900", color: "var(--text-main)" }}>
+                  <td style={{ padding: "11px 14px", fontWeight: "800", color: "var(--text-main)", textAlign: "right", whiteSpace: "nowrap", fontVariantNumeric: "tabular-nums" }}>
                     {formatCurrency(c.sales)}
                   </td>
-                  <td style={{ padding: "14px 12px", fontWeight: "800", color: "#10b981" }}>
+                  <td style={{ padding: "11px 14px", fontWeight: "800", color: "#10b981", textAlign: "right", whiteSpace: "nowrap", fontVariantNumeric: "tabular-nums" }}>
                     {formatCurrency(c.collection)}
                   </td>
-                  <td style={{ padding: "14px 12px", fontWeight: "800", color: c.outstanding > 0 ? "#ef4444" : "#10b981" }}>
+                  <td style={{ padding: "11px 14px", fontWeight: "800", color: c.outstanding > 0 ? "#ef4444" : "#10b981", textAlign: "right", whiteSpace: "nowrap", fontVariantNumeric: "tabular-nums" }}>
                     {formatCurrency(c.outstanding)}
                   </td>
-                  <td style={{ padding: "14px 12px" }}>
+                  <td style={{ padding: "11px 14px", textAlign: "center", whiteSpace: "nowrap" }}>
                     <span style={{
                       background: "rgba(16, 185, 129, 0.12)",
                       color: "#10b981",
-                      padding: "4px 10px",
+                      padding: "3px 8px",
                       borderRadius: "8px",
                       fontWeight: "700",
                       fontSize: "0.72rem",

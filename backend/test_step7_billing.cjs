@@ -33,7 +33,7 @@ async function runStep7BillingTests() {
   const ownerRes = await fetch(`${API_BASE}/api/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ emailOrMobile: "rajesh@chirag.com", password: "Password123!", role: "SUPER_ADMIN" })
+    body: JSON.stringify({ emailOrMobile: "owner@distributorerp.com", password: "Password123!", role: "SUPER_ADMIN" })
   });
   const ownerData = await ownerRes.json();
   ownerToken = ownerData.token;
@@ -42,7 +42,7 @@ async function runStep7BillingTests() {
   const financeRes = await fetch(`${API_BASE}/api/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ emailOrMobile: "amit.verma@chirag.com", password: "Password123!", role: "FINANCE" })
+    body: JSON.stringify({ emailOrMobile: "finance@distributorerp.com", password: "Password123!", role: "FINANCE" })
   });
   const financeData = await financeRes.json();
   financeToken = financeData.token;
@@ -51,7 +51,7 @@ async function runStep7BillingTests() {
   const smRes = await fetch(`${API_BASE}/api/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ emailOrMobile: "rahul.kumar@chirag.com", password: "Password123!", role: "SALESMAN" })
+    body: JSON.stringify({ emailOrMobile: "salesman@distributorerp.com", password: "Password123!", role: "SALESMAN" })
   });
   const smData = await smRes.json();
   salesmanToken = smData.token;

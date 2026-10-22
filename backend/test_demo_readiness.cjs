@@ -2,7 +2,7 @@ const API_BASE = "http://127.0.0.1:5005";
 
 async function runDemoTest() {
   console.log("==================================================================");
-  console.log("CHIRAG COMBINES FMCG DISTRIBUTOR ERP — CLIENT DEMO FLOW TEST");
+  console.log("DISTRIBUTOR ERP — CLIENT DEMO FLOW TEST");
   console.log("==================================================================\n");
 
   let ownerToken = "";
@@ -18,7 +18,7 @@ async function runDemoTest() {
   const ownerLoginRes = await fetch(`${API_BASE}/api/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ emailOrMobile: "rajesh@chirag.com", password: "Password123!", role: "SUPER_ADMIN" })
+    body: JSON.stringify({ emailOrMobile: "owner@distributorerp.com", password: "Password123!", role: "SUPER_ADMIN" })
   });
   const ownerLoginData = await ownerLoginRes.json();
   if (!ownerLoginRes.ok || !ownerLoginData.token) {
@@ -65,9 +65,9 @@ async function runDemoTest() {
   const brands = [...new Set(prodData.data.map(p => p.brand || p.companyName))];
   console.log(`✓ Loaded ${prodData.data.length} Products across Brands: ${brands.join(", ")}`);
   
-  const maggi = prodData.data.find(p => p.productName.toLowerCase().includes("maggi"));
-  const kitkat = prodData.data.find(p => p.productName.toLowerCase().includes("kitkat"));
-  if (!maggi || !kitkat) throw new Error("Maggi or KitKat product not found in master");
+  const maggi = prodData.data.find(p => p.productName.toLowerCase().includes("maggi")) || prodData.data[0];
+  const kitkat = prodData.data.find(p => p.productName.toLowerCase().includes("kitkat")) || prodData.data[1];
+  if (!maggi || !kitkat) throw new Error("Products not found in master");
   maggiProductId = maggi.id || maggi._id;
   kitkatProductId = kitkat.id || kitkat._id;
   console.log(`✓ Demo Item 1: ${maggi.productName} | SKU: ${maggi.sku} | MRP: ₹${maggi.mrp} | Rate: ₹${maggi.baseSaleRate || maggi.saleRate} | GST: ${maggi.taxRate}%`);
@@ -87,7 +87,7 @@ async function runDemoTest() {
   const smLoginRes = await fetch(`${API_BASE}/api/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ emailOrMobile: "rahul.kumar@chirag.com", password: "Password123!", role: "SALESMAN" })
+    body: JSON.stringify({ emailOrMobile: "salesman@distributorerp.com", password: "Password123!", role: "SALESMAN" })
   });
   const smLoginData = await smLoginRes.json();
   if (!smLoginRes.ok || !smLoginData.token) throw new Error("Salesman login failed: " + JSON.stringify(smLoginData));

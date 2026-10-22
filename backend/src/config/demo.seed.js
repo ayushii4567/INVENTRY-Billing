@@ -13,20 +13,99 @@ import { generateBillFromOrderService, lockBillService } from "../modules/billin
 import { createPaymentRecord, mapPaymentToBills } from "../modules/payments/payment.repository.js";
 import { createVehicleRecord, createTripRecord } from "../modules/delivery/delivery.repository.js";
 import { exceptionRepository } from "../modules/exceptions/exception.repository.js";
+import Supplier from "../models/Supplier.js";
+import Product from "../models/Product.js";
+import { createSupplierRecord } from "../modules/suppliers/supplier.repository.js";
+import { createPurchaseVoucher } from "../modules/purchases/purchase.repository.js";
 
 const DEMO_USER = { name: "Rajesh Sharma", role: "SUPER_ADMIN", id: "user-owner-01" };
 
 export async function seedDemoData() {
   try {
-    // Check if demo data already exists (avoid duplicate seed on restart)
-    const existingCustomers = await findCustomers({ page: 1, limit: 1 });
-    if (existingCustomers.total > 0) {
-      console.log("ℹ️  Demo data already present. Skipping seed.");
-      return;
+    // ── Check & Seed Suppliers (Sundry Creditors) if empty ───────────
+    try {
+      const supCount = await Supplier.countDocuments();
+      if (supCount === 0) {
+        console.log("🌱 Seeding FMCG Suppliers & Inward Purchase Vouchers...");
+        const sup1 = await createSupplierRecord({
+          supplierCode: "SUP-001",
+          supplierName: "Nestlé India Limited",
+          contactPerson: "Alok Sengupta (Depot Manager)",
+          mobile: "9826112233",
+          email: "depot.raipur@in.nestle.com",
+          address: "Plot 14-16, Urla Industrial Complex",
+          city: "Raipur",
+          state: "Chhattisgarh",
+          pincode: "492003",
+          gstin: "22AAACN0142D1Z8",
+          openingBalance: 0,
+          currentBalance: 84500,
+          creditDays: 21
+        }, DEMO_USER);
+
+        const sup2 = await createSupplierRecord({
+          supplierCode: "SUP-002",
+          supplierName: "Patanjali Ayurved Ltd (C&F)",
+          contactPerson: "Rameshwar Patidar",
+          mobile: "9826334455",
+          email: "cnf.chhattisgarh@patanjali.org",
+          address: "Transport Nagar, Tatibandh",
+          city: "Raipur",
+          state: "Chhattisgarh",
+          pincode: "492099",
+          gstin: "22AABCP7762K1ZU",
+          openingBalance: 12500,
+          currentBalance: 42000,
+          creditDays: 30
+        }, DEMO_USER);
+
+        const sup3 = await createSupplierRecord({
+          supplierCode: "SUP-003",
+          supplierName: "Hindustan Unilever Limited",
+          contactPerson: "Virendra Verma",
+          mobile: "9826556677",
+          email: "depot.cg@unilever.com",
+          address: "Bhanpuri Logistics Park",
+          city: "Raipur",
+          state: "Chhattisgarh",
+          pincode: "493221",
+          gstin: "22AAACH1234M1Z2",
+          openingBalance: 0,
+          currentBalance: 0,
+          creditDays: 15
+        }, DEMO_USER);
+
+        // Find products to associate with sample purchase
+        const sampleProducts = await Product.find().limit(3).lean();
+        if (sampleProducts.length > 0) {
+          await createPurchaseVoucher({
+            supplierInvoiceNumber: "INV-NESTLE-2026-9481",
+            purchaseDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+            supplierId: sup1.id || sup1._id.toString(),
+            supplierCode: sup1.supplierCode,
+            supplierName: sup1.supplierName,
+            supplierGstin: sup1.gstin,
+            items: sampleProducts.map((p) => ({
+              productId: p._id.toString(),
+              productCode: p.productCode,
+              productName: p.productName,
+              sku: p.sku,
+              unit: p.unit || "PCS",
+              quantity: 200,
+              purchaseRate: p.purchaseRate || 15,
+              mrp: p.mrp || 25,
+              saleRate: p.saleRate || 20,
+              discount: 2,
+              taxRate: 5
+            })),
+            paidAmount: 0,
+            notes: "Monthly primary stock replenishment from Nestlé Urla warehouse"
+          }, DEMO_USER);
+        }
+      }
+    } catch (e) {
+      console.warn("Supplier seed warning:", e.message);
     }
-
-    console.log("🌱 Seeding comprehensive FMCG Distributor ERP demo data...");
-
     // ── 1. Areas ──────────────────────────────────────────────
     const areaCentral = await createAreaRecord({
       areaName: "Raipur Central",
@@ -92,6 +171,16 @@ export async function seedDemoData() {
       assignedRouteId: routeB.id,
       assignedRouteName: routeB.routeName
     }, DEMO_USER);
+
+    // Check if customer/product demo data already exists (avoid duplicate customer seeding)
+    const existingCustomers = await findCustomers({ page: 1, limit: 1 });
+    const prodCount = await Product.countDocuments();
+    if (existingCustomers.total > 0 && prodCount > 0) {
+      console.log("ℹ️  Customer and Product demo data already present in database.");
+      return;
+    }
+
+    console.log("🌱 Seeding comprehensive FMCG Distributor ERP demo data...");
 
     // ── 4. Customers / Retail Outlets ─────────────────────────
     const cust1 = await createCustomerRecord({
@@ -174,94 +263,106 @@ export async function seedDemoData() {
       outletType: "GENERAL_TRADE"
     }, DEMO_USER);
 
-    // ── 5. FMCG Products (Nestlé, Patanjali, GSK) ─────────────
+    // ── 5. Standard Tally-Format Stock Items (Finished Goods, Trading Goods, Raw Materials) ──
     const prodMaggi = await createProductRecord({
-      productName: "Maggi 2-Minute Masala Noodles 70g",
-      sku: "NEST-MAG-70",
-      companyId: "COMP-NESTLE",
-      companyName: "Nestlé India",
-      category: "Noodles",
-      unit: "PACK",
-      packSize: "70g",
-      mrp: 14,
-      saleRate: 12.5,
-      purchaseRate: 10.0,
-      taxRate: 5,
+      productName: "Standard Item A (Finished Goods)",
+      sku: "STD-ITM-001",
+      companyId: "GRP-FINISHED",
+      companyName: "Finished Goods",
+      category: "Finished Goods",
+      subcategory: "General Standard Items",
+      hsnCode: "84713010",
+      unit: "PCS",
+      packSize: "1 Pc",
+      mrp: 1200,
+      saleRate: 1050.0,
+      purchaseRate: 850.0,
+      taxRate: 18,
       minimumStock: 50
     }, DEMO_USER);
 
     const prodKitKat = await createProductRecord({
-      productName: "KitKat 4 Finger Chocolate 38g",
-      sku: "NEST-KIT-38",
-      companyId: "COMP-NESTLE",
-      companyName: "Nestlé India",
-      category: "Confectionery",
-      unit: "PACK",
-      packSize: "38g",
-      mrp: 30,
-      saleRate: 26.5,
-      purchaseRate: 22.0,
-      taxRate: 18,
+      productName: "Commercial Pack Box (50 Units)",
+      sku: "TRD-BOX-050",
+      companyId: "GRP-TRADING",
+      companyName: "Trading Goods",
+      category: "Trading Goods",
+      subcategory: "Packaged Commercial Goods",
+      hsnCode: "48191010",
+      unit: "BOX",
+      packSize: "50 Units",
+      mrp: 2000,
+      saleRate: 1750.0,
+      purchaseRate: 1400.0,
+      taxRate: 12,
       minimumStock: 40
     }, DEMO_USER);
 
     const prodNescafe = await createProductRecord({
-      productName: "Nescafé Classic Instant Coffee 50g",
-      sku: "NEST-NES-50",
-      companyId: "COMP-NESTLE",
-      companyName: "Nestlé India",
-      category: "Beverages",
-      unit: "JAR",
-      packSize: "50g",
-      mrp: 180,
-      saleRate: 160.0,
-      purchaseRate: 140.0,
+      productName: "Industrial Assembly Unit Type-1",
+      sku: "IND-ASM-101",
+      companyId: "GRP-FINISHED",
+      companyName: "Finished Goods",
+      category: "Finished Goods",
+      subcategory: "Assemblies & Modules",
+      hsnCode: "85044090",
+      unit: "NOS",
+      packSize: "1 No",
+      mrp: 3000,
+      saleRate: 2600.0,
+      purchaseRate: 2100.0,
       taxRate: 18,
       minimumStock: 25
     }, DEMO_USER);
 
     const prodHorlicks = await createProductRecord({
-      productName: "GSK Horlicks Classic Malt 500g",
-      sku: "GSK-HOR-500",
-      companyId: "COMP-GSK",
-      companyName: "GSK Healthcare",
-      category: "Nutrition",
-      unit: "JAR",
-      packSize: "500g",
-      mrp: 285,
-      saleRate: 250.0,
-      purchaseRate: 220.0,
+      productName: "General Consumable Pack (Grade A)",
+      sku: "CON-GEN-012",
+      companyId: "GRP-CONSUMABLES",
+      companyName: "Consumables",
+      category: "Consumables",
+      subcategory: "General Operational Supply",
+      hsnCode: "38140010",
+      unit: "PKT",
+      packSize: "12 Pkts",
+      mrp: 550,
+      saleRate: 480.0,
+      purchaseRate: 380.0,
       taxRate: 18,
       minimumStock: 30
     }, DEMO_USER);
 
     const prodHoney = await createProductRecord({
-      productName: "Patanjali Pure Honey 500g",
-      sku: "PAT-HON-500",
-      companyId: "COMP-PATANJALI",
-      companyName: "Patanjali Ayurved",
-      category: "Health & Wellness",
-      unit: "BOTTLE",
-      packSize: "500g",
-      mrp: 220,
-      saleRate: 195.0,
-      purchaseRate: 165.0,
+      productName: "Bulk Raw Material Pack 25kg",
+      sku: "RAW-MAT-025",
+      companyId: "GRP-RAW",
+      companyName: "Raw Materials",
+      category: "Raw Materials",
+      subcategory: "Primary Bulk Input",
+      hsnCode: "25010010",
+      unit: "BAG",
+      packSize: "25 Kg",
+      mrp: 900,
+      saleRate: 800.0,
+      purchaseRate: 650.0,
       taxRate: 5,
       minimumStock: 30
     }, DEMO_USER);
 
     const prodDantKanti = await createProductRecord({
-      productName: "Patanjali Dant Kanti Dental Cream 100g",
-      sku: "PAT-DK-100",
-      companyId: "COMP-PATANJALI",
-      companyName: "Patanjali Ayurved",
-      category: "Oral Care",
-      unit: "TUBE",
-      packSize: "100g",
-      mrp: 60,
-      saleRate: 52.0,
-      purchaseRate: 44.0,
-      taxRate: 12,
+      productName: "Hardware Fasteners Assorted Kit",
+      sku: "HRD-FST-100",
+      companyId: "GRP-TRADING",
+      companyName: "Trading Goods",
+      category: "Trading Goods",
+      subcategory: "Fasteners & Fixtures",
+      hsnCode: "73181500",
+      unit: "SET",
+      packSize: "1 Set (100 Pcs)",
+      mrp: 320,
+      saleRate: 280.0,
+      purchaseRate: 220.0,
+      taxRate: 18,
       minimumStock: 50
     }, DEMO_USER);
 
@@ -294,7 +395,7 @@ export async function seedDemoData() {
     // Order 1: Sharma General Store -> Bill 1 (Fully Paid via UPI)
     const order1 = await createOrderRecord({
       customerId: cust1.id,
-      customerName: cust1.customerName,
+      customerName: cust1.shopName || cust1.customerName,
       customerCode: cust1.customerCode,
       routeId: routeA.id,
       routeName: routeA.routeName,
@@ -335,7 +436,7 @@ export async function seedDemoData() {
     // Order 2: Gupta Provision Store -> Bill 2 (Partially Paid via Cash)
     const order2 = await createOrderRecord({
       customerId: cust2.id,
-      customerName: cust2.customerName,
+      customerName: cust2.shopName || cust2.customerName,
       customerCode: cust2.customerCode,
       routeId: routeA.id,
       routeName: routeA.routeName,
@@ -376,7 +477,7 @@ export async function seedDemoData() {
     // Order 3: New Horizon Mart -> Bill 3 (Unpaid / Open Invoice)
     const order3 = await createOrderRecord({
       customerId: cust3.id,
-      customerName: cust3.customerName,
+      customerName: cust3.shopName || cust3.customerName,
       customerCode: cust3.customerCode,
       routeId: routeB.id,
       routeName: routeB.routeName,

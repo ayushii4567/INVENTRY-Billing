@@ -135,7 +135,7 @@ export default function ExecutiveReports({ token, user, onNavigateTab }) {
                   EXECUTIVE BUSINESS REPORTS
                 </h1>
                 <span style={{ fontSize: "0.82rem", color: "var(--text-muted)", fontWeight: "600" }}>
-                  Chirag Combines FMCG • Complete Commercial & Field Analytics
+                  Distributor ERP • Complete Commercial & Field Analytics
                 </span>
               </div>
             </div>

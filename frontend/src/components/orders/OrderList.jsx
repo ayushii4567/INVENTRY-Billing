@@ -359,48 +359,42 @@ export default function OrderList({
       )}
 
       {/* Orders Table Container */}
-      <div className="glass-card" style={{
-        borderRadius: "14px",
-        overflow: "hidden",
-        border: "1px solid var(--border-color)",
-        background: "var(--bg-surface)"
-      }}>
-        <div style={{ overflowX: "auto" }}>
-          <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left" }}>
-            <thead>
-              <tr style={{ background: "var(--table-header-bg)", borderBottom: "1px solid var(--border-color)" }}>
-                <th style={{ padding: "14px 18px", fontSize: "0.75rem", fontWeight: "700", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
-                  Order #
-                </th>
-                <th style={{ padding: "14px 18px", fontSize: "0.75rem", fontWeight: "700", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
-                  Date
-                </th>
-                <th style={{ padding: "14px 18px", fontSize: "0.75rem", fontWeight: "700", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
-                  Customer
-                </th>
-                <th style={{ padding: "14px 18px", fontSize: "0.75rem", fontWeight: "700", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
-                  Salesman
-                </th>
-                <th style={{ padding: "14px 18px", fontSize: "0.75rem", fontWeight: "700", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
-                  Route
-                </th>
-                <th style={{ padding: "14px 18px", fontSize: "0.75rem", fontWeight: "700", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em", textAlign: "center" }}>
-                  Items
-                </th>
-                <th style={{ padding: "14px 18px", fontSize: "0.75rem", fontWeight: "700", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em", textAlign: "center" }}>
-                  Quantity
-                </th>
-                <th style={{ padding: "14px 18px", fontSize: "0.75rem", fontWeight: "700", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em", textAlign: "right" }}>
-                  Amount
-                </th>
-                <th style={{ padding: "14px 18px", fontSize: "0.75rem", fontWeight: "700", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
-                  Status
-                </th>
-                <th style={{ padding: "14px 18px", fontSize: "0.75rem", fontWeight: "700", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em", textAlign: "right" }}>
-                  Actions
-                </th>
-              </tr>
-            </thead>
+      <div className="erp-table-container">
+        <table className="erp-table" style={{ minWidth: "1100px" }}>
+          <thead>
+            <tr>
+              <th style={{ width: "130px", padding: "12px 14px" }}>
+                Order #
+              </th>
+              <th style={{ width: "110px", padding: "12px 14px" }}>
+                Date
+              </th>
+              <th style={{ minWidth: "200px", padding: "12px 14px" }}>
+                Customer
+              </th>
+              <th style={{ width: "140px", padding: "12px 14px" }}>
+                Salesman
+              </th>
+              <th style={{ width: "140px", padding: "12px 14px" }}>
+                Route
+              </th>
+              <th style={{ width: "90px", padding: "12px 14px", textAlign: "center" }}>
+                Items
+              </th>
+              <th style={{ width: "90px", padding: "12px 14px", textAlign: "center" }}>
+                Quantity
+              </th>
+              <th style={{ width: "120px", padding: "12px 14px", textAlign: "right" }}>
+                Amount
+              </th>
+              <th style={{ width: "110px", padding: "12px 14px" }}>
+                Status
+              </th>
+              <th style={{ width: "170px", padding: "12px 14px", textAlign: "right" }}>
+                Actions
+              </th>
+            </tr>
+          </thead>
             <tbody>
               {loading ? (
                 <tr>
@@ -451,7 +445,7 @@ export default function OrderList({
                     }}
                   >
                     {/* Order # */}
-                    <td style={{ padding: "16px 18px" }}>
+                    <td style={{ padding: "11px 14px" }}>
                       <div style={{ fontSize: "0.875rem", fontFamily: "monospace", fontWeight: "700", color: "var(--primary-400)" }}>
                         {ord.orderNumber}
                       </div>
@@ -467,7 +461,7 @@ export default function OrderList({
                     </td>
 
                     {/* Customer */}
-                    <td style={{ padding: "16px 18px" }}>
+                    <td style={{ padding: "11px 14px" }}>
                       <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                         <div style={{
                           width: "30px",
@@ -494,7 +488,7 @@ export default function OrderList({
                     </td>
 
                     {/* Salesman */}
-                    <td style={{ padding: "16px 18px" }}>
+                    <td style={{ padding: "11px 14px" }}>
                       <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
                         <UserCheck size={14} style={{ color: "var(--primary-400)" }} />
                         <span style={{ fontSize: "0.85rem", fontWeight: "600", color: "var(--text-main)" }}>
@@ -504,7 +498,7 @@ export default function OrderList({
                     </td>
 
                     {/* Route */}
-                    <td style={{ padding: "16px 18px" }}>
+                    <td style={{ padding: "11px 14px" }}>
                       <span style={{
                         padding: "3px 8px",
                         borderRadius: "6px",
@@ -519,7 +513,7 @@ export default function OrderList({
                     </td>
 
                     {/* Items */}
-                    <td style={{ padding: "16px 18px", textAlign: "center" }}>
+                    <td style={{ padding: "11px 14px", textAlign: "center", whiteSpace: "nowrap" }}>
                       <span style={{
                         padding: "3px 8px",
                         borderRadius: "10px",
@@ -534,7 +528,7 @@ export default function OrderList({
                     </td>
 
                     {/* Quantity */}
-                    <td style={{ padding: "16px 18px", textAlign: "center" }}>
+                    <td style={{ padding: "11px 14px", textAlign: "center", whiteSpace: "nowrap" }}>
                       <span style={{
                         padding: "3px 8px",
                         borderRadius: "10px",
@@ -548,19 +542,19 @@ export default function OrderList({
                     </td>
 
                     {/* Amount */}
-                    <td style={{ padding: "16px 18px", textAlign: "right" }}>
-                      <strong style={{ fontSize: "0.95rem", color: "var(--text-main)" }}>
+                    <td style={{ padding: "11px 14px", textAlign: "right", fontVariantNumeric: "tabular-nums", whiteSpace: "nowrap" }}>
+                      <strong style={{ fontSize: "0.92rem", color: "var(--text-main)" }}>
                         {format(ord.pricingSummary?.grandTotal)}
                       </strong>
                     </td>
 
                     {/* Status */}
-                    <td style={{ padding: "16px 18px" }}>
+                    <td style={{ padding: "11px 14px", whiteSpace: "nowrap" }}>
                       <OrderStatusBadge status={ord.status} />
                     </td>
 
                     {/* Action */}
-                    <td style={{ padding: "16px 18px", textAlign: "right" }}>
+                    <td style={{ padding: "11px 14px", textAlign: "right", whiteSpace: "nowrap" }}>
                       <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: "8px" }}>
                         <button
                           onClick={() => onSelectOrder(ord)}
@@ -682,7 +676,6 @@ export default function OrderList({
             </button>
           </div>
         </div>
-      </div>
 
       {/* Cancellation Modal */}
       {cancellingOrder && (

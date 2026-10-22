@@ -15,7 +15,9 @@ export const getPayments = async (req, res) => {
       limit = 10,
       search = "",
       status = "ALL",
-      paymentMode = "ALL"
+      paymentMode = "ALL",
+      paymentType = "ALL",
+      supplierId = null
     } = req.query;
 
     const result = await listPaymentsService({
@@ -24,6 +26,8 @@ export const getPayments = async (req, res) => {
       search,
       status,
       paymentMode,
+      paymentType,
+      supplierId,
       user: req.user
     });
 

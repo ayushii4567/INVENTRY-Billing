@@ -17,6 +17,7 @@ import {
   Sparkles
 } from "lucide-react";
 import OrderStatusBadge from "../orders/OrderStatusBadge";
+import PartyLedger from "../ledger/PartyLedger";
 
 export default function CustomerDetails({ customer, token, onBack, onOpenEditModal, onOpenStatusModal }) {
   const [activeTab, setActiveTab] = useState("overview");
@@ -30,7 +31,7 @@ export default function CustomerDetails({ customer, token, onBack, onOpenEditMod
         setOrdersLoading(true);
         setOrdersError("");
         try {
-          const authToken = token || localStorage.getItem("distributor_token");
+          const authToken = token || localStorage.getItem("erp_token") || localStorage.getItem("distributor_token");
           const res = await fetch(`http://localhost:5005/api/customers/${customer.id}/orders`, {
             headers: { "Authorization": `Bearer ${authToken}` }
           });
@@ -198,9 +199,9 @@ export default function CustomerDetails({ customer, token, onBack, onOpenEditMod
         {[
           { id: "overview", label: "Master Overview", icon: Store },
           { id: "orders", label: "Orders", icon: ShoppingBag },
+          { id: "ledger", label: "Party Ledger", icon: Layers },
           { id: "bills", label: "Bills & Invoices", icon: FileText, placeholder: true },
-          { id: "payments", label: "Payments", icon: Coins, placeholder: true },
-          { id: "ledger", label: "Customer Ledger", icon: Layers, placeholder: true }
+          { id: "payments", label: "Payments", icon: Coins, placeholder: true }
         ].map((tab) => {
           const IconComp = tab.icon;
           const isActive = activeTab === tab.id;
@@ -393,8 +394,18 @@ export default function CustomerDetails({ customer, token, onBack, onOpenEditMod
         </div>
       )}
 
+      {/* Customer Ledger Statement */}
+      {activeTab === "ledger" && (
+        <PartyLedger
+          token={token}
+          initialPartyType="CUSTOMER"
+          initialPartyId={customer.id || customer._id}
+          embedded={true}
+        />
+      )}
+
       {/* Future Module Tab Placeholders */}
-      {activeTab !== "overview" && activeTab !== "orders" && (
+      {activeTab !== "overview" && activeTab !== "orders" && activeTab !== "ledger" && (
         <div className="glass-card" style={{ padding: "60px", textAlign: "center" }}>
           <Sparkles size={40} color="var(--primary-400)" style={{ marginBottom: "16px" }} />
           <h3 style={{ fontSize: "1.2rem", fontWeight: "800", color: "var(--text-main)", marginBottom: "8px" }}>

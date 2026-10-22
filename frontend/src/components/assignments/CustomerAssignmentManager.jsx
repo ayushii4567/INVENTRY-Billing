@@ -311,36 +311,18 @@ export default function CustomerAssignmentManager({
       )}
 
       {/* Table Container */}
-      <div className="glass-card" style={{
-        borderRadius: "14px",
-        overflow: "hidden",
-        border: "1px solid var(--border-color)",
-        background: "var(--bg-surface)"
-      }}>
-        <div style={{ overflowX: "auto" }}>
-          <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left" }}>
-            <thead>
-              <tr style={{ background: "var(--table-header-bg)", borderBottom: "1px solid var(--border-color)" }}>
-                <th style={{ padding: "14px 18px", fontSize: "0.75rem", fontWeight: "700", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
-                  Outlet Details
-                </th>
-                <th style={{ padding: "14px 18px", fontSize: "0.75rem", fontWeight: "700", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
-                  Territory / Area
-                </th>
-                <th style={{ padding: "14px 18px", fontSize: "0.75rem", fontWeight: "700", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
-                  Delivery Beat / Route
-                </th>
-                <th style={{ padding: "14px 18px", fontSize: "0.75rem", fontWeight: "700", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
-                  Assigned Representative
-                </th>
-                <th style={{ padding: "14px 18px", fontSize: "0.75rem", fontWeight: "700", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
-                  Assignment Status
-                </th>
-                <th style={{ padding: "14px 18px", fontSize: "0.75rem", fontWeight: "700", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em", textAlign: "right" }}>
-                  Actions
-                </th>
-              </tr>
-            </thead>
+      <div className="erp-table-container">
+        <table className="erp-table" style={{ minWidth: "1000px" }}>
+          <thead>
+            <tr>
+              <th style={{ minWidth: "240px" }}>Outlet Details</th>
+              <th style={{ minWidth: "160px" }}>Territory / Area</th>
+              <th style={{ minWidth: "160px" }}>Delivery Beat / Route</th>
+              <th style={{ minWidth: "180px" }}>Assigned Representative</th>
+              <th style={{ minWidth: "140px", textAlign: "center" }}>Assignment Status</th>
+              <th style={{ minWidth: "120px", textAlign: "right" }}>Actions</th>
+            </tr>
+          </thead>
             <tbody>
               {loading ? (
                 <tr>
@@ -361,17 +343,15 @@ export default function CustomerAssignmentManager({
                     <tr 
                       key={cus.id} 
                       style={{ 
-                        borderBottom: "1px solid var(--border-color)",
-                        background: isUnassigned ? "rgba(239, 68, 68, 0.03)" : "transparent",
-                        transition: "background 0.15s ease"
+                        background: isUnassigned ? "rgba(239, 68, 68, 0.04)" : undefined
                       }}
                     >
                       {/* Outlet */}
-                      <td style={{ padding: "16px 18px" }}>
+                      <td style={{ padding: "11px 14px" }}>
                         <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
                           <div style={{
-                            width: "34px",
-                            height: "34px",
+                            width: "32px",
+                            height: "32px",
                             borderRadius: "8px",
                             background: isUnassigned ? "rgba(239, 68, 68, 0.1)" : "rgba(99, 102, 241, 0.1)",
                             color: isUnassigned ? "#f87171" : "var(--primary-400)",
@@ -380,14 +360,14 @@ export default function CustomerAssignmentManager({
                             justifyContent: "center",
                             flexShrink: 0
                           }}>
-                            <Store size={18} />
+                            <Store size={16} />
                           </div>
                           <div>
-                            <span style={{ fontWeight: "700", color: "var(--text-main)", fontSize: "0.9rem" }}>
+                            <span style={{ fontWeight: "700", color: "var(--text-main)", fontSize: "0.88rem", whiteSpace: "nowrap" }}>
                               {cus.shopName}
                             </span>
-                            <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "0.75rem", color: "var(--text-muted)", marginTop: "2px" }}>
-                              <span style={{ fontFamily: "monospace" }}>{cus.customerCode}</span>
+                            <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "0.72rem", color: "var(--text-muted)", marginTop: "1px", whiteSpace: "nowrap" }}>
+                              <span style={{ fontFamily: "var(--font-mono, monospace)" }}>{cus.customerCode}</span>
                               <span>•</span>
                               <span>{cus.ownerName}</span>
                             </div>
@@ -396,24 +376,24 @@ export default function CustomerAssignmentManager({
                       </td>
 
                       {/* Area */}
-                      <td style={{ padding: "16px 18px" }}>
-                        <div style={{ display: "flex", alignItems: "center", gap: "6px", color: "var(--text-main)", fontSize: "0.85rem" }}>
-                          <MapPin size={14} style={{ color: "var(--text-muted)" }} />
+                      <td style={{ padding: "11px 14px", whiteSpace: "nowrap" }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: "6px", color: "var(--text-main)", fontSize: "0.82rem" }}>
+                          <MapPin size={13} style={{ color: "var(--text-muted)" }} />
                           <span>{cus.areaName || "Unassigned"}</span>
                         </div>
                       </td>
 
                       {/* Route */}
-                      <td style={{ padding: "16px 18px" }}>
+                      <td style={{ padding: "11px 14px", whiteSpace: "nowrap" }}>
                         {cus.routeId ? (
-                          <div style={{ display: "flex", alignItems: "center", gap: "6px", color: "var(--text-main)", fontSize: "0.85rem" }}>
-                            <RouteIcon size={14} style={{ color: "var(--primary-400)" }} />
+                          <div style={{ display: "flex", alignItems: "center", gap: "6px", color: "var(--text-main)", fontSize: "0.82rem" }}>
+                            <RouteIcon size={13} style={{ color: "var(--primary-400)" }} />
                             <span>{cus.routeName || cus.routeId}</span>
                           </div>
                         ) : (
                           <span style={{
-                            fontSize: "0.75rem",
-                            padding: "3px 8px",
+                            fontSize: "0.72rem",
+                            padding: "2px 8px",
                             borderRadius: "6px",
                             background: "rgba(239, 68, 68, 0.1)",
                             color: "#f87171",
@@ -425,31 +405,31 @@ export default function CustomerAssignmentManager({
                       </td>
 
                       {/* Salesman */}
-                      <td style={{ padding: "16px 18px" }}>
+                      <td style={{ padding: "11px 14px", whiteSpace: "nowrap" }}>
                         {cus.salesmanId ? (
                           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                             <div style={{
-                              width: "26px",
-                              height: "26px",
+                              width: "24px",
+                              height: "24px",
                               borderRadius: "50%",
                               background: "rgba(99, 102, 241, 0.15)",
                               color: "var(--primary-400)",
                               display: "flex",
                               alignItems: "center",
                               justifyContent: "center",
-                              fontSize: "0.75rem",
+                              fontSize: "0.72rem",
                               fontWeight: "700"
                             }}>
                               {cus.salesmanName ? cus.salesmanName.charAt(0) : "S"}
                             </div>
-                            <span style={{ fontSize: "0.85rem", fontWeight: "600", color: "var(--text-main)" }}>
+                            <span style={{ fontSize: "0.82rem", fontWeight: "600", color: "var(--text-main)" }}>
                               {cus.salesmanName || cus.salesmanId}
                             </span>
                           </div>
                         ) : (
                           <span style={{
-                            fontSize: "0.75rem",
-                            padding: "3px 8px",
+                            fontSize: "0.72rem",
+                            padding: "2px 8px",
                             borderRadius: "6px",
                             background: "rgba(239, 68, 68, 0.1)",
                             color: "#f87171",
@@ -461,14 +441,14 @@ export default function CustomerAssignmentManager({
                       </td>
 
                       {/* Status */}
-                      <td style={{ padding: "16px 18px" }}>
+                      <td style={{ padding: "11px 14px", textAlign: "center", whiteSpace: "nowrap" }}>
                         <span style={{
                           display: "inline-flex",
                           alignItems: "center",
-                          gap: "6px",
-                          padding: "4px 10px",
+                          gap: "5px",
+                          padding: "3px 9px",
                           borderRadius: "20px",
-                          fontSize: "0.75rem",
+                          fontSize: "0.72rem",
                           fontWeight: "700",
                           background: isUnassigned ? "rgba(239, 68, 68, 0.12)" : "rgba(16, 185, 129, 0.12)",
                           color: isUnassigned ? "#f87171" : "#34d399",
@@ -485,27 +465,23 @@ export default function CustomerAssignmentManager({
                       </td>
 
                       {/* Actions */}
-                      <td style={{ padding: "16px 18px", textAlign: "right" }}>
-                        <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: "8px" }}>
+                      <td style={{ padding: "11px 14px", textAlign: "right", whiteSpace: "nowrap" }}>
+                        <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: "6px" }}>
                           {canModify && (
                             <button
                               onClick={() => onOpenAssignModal(cus)}
                               title="Reassign Beat or Salesman"
+                              className="btn-secondary"
                               style={{
-                                padding: "6px 10px",
-                                borderRadius: "6px",
-                                border: "1px solid var(--border-color)",
-                                background: "var(--bg-secondary)",
-                                color: "var(--text-main)",
-                                fontSize: "0.8rem",
+                                padding: "5px 10px",
+                                fontSize: "0.75rem",
                                 fontWeight: "600",
-                                cursor: "pointer",
-                                display: "flex",
+                                display: "inline-flex",
                                 alignItems: "center",
                                 gap: "4px"
                               }}
                             >
-                              <ArrowRightLeft size={14} />
+                              <ArrowRightLeft size={13} />
                               <span>Reassign</span>
                             </button>
                           )}
@@ -513,21 +489,17 @@ export default function CustomerAssignmentManager({
                           <button
                             onClick={() => onOpenHistoryModal(cus)}
                             title="View Assignment Audit History"
+                            className="btn-secondary"
                             style={{
-                              padding: "6px 10px",
-                              borderRadius: "6px",
-                              border: "1px solid var(--border-color)",
-                              background: "transparent",
-                              color: "var(--text-muted)",
-                              fontSize: "0.8rem",
+                              padding: "5px 10px",
+                              fontSize: "0.75rem",
                               fontWeight: "600",
-                              cursor: "pointer",
-                              display: "flex",
+                              display: "inline-flex",
                               alignItems: "center",
                               gap: "4px"
                             }}
                           >
-                            <History size={14} />
+                            <History size={13} />
                             <span>Audit</span>
                           </button>
                         </div>
@@ -591,6 +563,5 @@ export default function CustomerAssignmentManager({
           </div>
         </div>
       </div>
-    </div>
   );
 }

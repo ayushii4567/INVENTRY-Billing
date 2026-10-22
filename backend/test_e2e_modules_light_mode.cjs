@@ -23,7 +23,7 @@ function assert(condition, message) {
 
 async function runTests() {
   console.log('================================================================');
-  console.log('CHIRAG COMBINES FMCG ERP - COMPLETE MODULE TEST SUITE (STEPS 1-12)');
+  console.log('DISTRIBUTOR ERP - COMPLETE MODULE TEST SUITE (STEPS 1-12)');
   console.log('================================================================\n');
 
   // -------------------------------------------------------------

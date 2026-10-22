@@ -1,11 +1,7 @@
 import mongoose from "mongoose";
 
 export const connectDB = async () => {
-  const mongoURI = process.env.MONGODB_URI;
-  if (!mongoURI) {
-    console.log("ℹ️ MONGODB_URI not specified. Using Mongoose in-memory schema repository mode.");
-    return false;
-  }
+  const mongoURI = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/inventry_billing";
 
   try {
     await mongoose.connect(mongoURI);

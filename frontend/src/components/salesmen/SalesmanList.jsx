@@ -226,38 +226,32 @@ export default function SalesmanList({
       )}
 
       {/* Table Container */}
-      <div className="glass-card" style={{
-        borderRadius: "14px",
-        overflow: "hidden",
-        border: "1px solid var(--border-color)",
-        background: "var(--bg-surface)"
-      }}>
-        <div style={{ overflowX: "auto" }}>
-          <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left" }}>
-            <thead>
-              <tr style={{ background: "var(--table-header-bg)", borderBottom: "1px solid var(--border-color)" }}>
-                <th style={{ padding: "14px 18px", fontSize: "0.75rem", fontWeight: "700", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
-                  Code / Emp ID
+      <div className="erp-table-container">
+        <table className="erp-table" style={{ minWidth: "980px" }}>
+          <thead>
+            <tr>
+              <th style={{ width: "120px", padding: "12px 14px" }}>
+                Code / Emp ID
+              </th>
+              <th style={{ minWidth: "200px", padding: "12px 14px" }}>
+                Sales Representative
+              </th>
+              <th style={{ width: "160px", padding: "12px 14px" }}>
+                Contact Info
+              </th>
+              <th style={{ width: "220px", padding: "12px 14px" }}>
+                Assigned Beats
+              </th>
+              <th style={{ width: "110px", padding: "12px 14px" }}>
+                Status
+              </th>
+              {canModify && (
+                <th style={{ width: "210px", padding: "12px 14px", textAlign: "right" }}>
+                  Actions
                 </th>
-                <th style={{ padding: "14px 18px", fontSize: "0.75rem", fontWeight: "700", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
-                  Sales Representative
-                </th>
-                <th style={{ padding: "14px 18px", fontSize: "0.75rem", fontWeight: "700", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
-                  Contact Info
-                </th>
-                <th style={{ padding: "14px 18px", fontSize: "0.75rem", fontWeight: "700", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
-                  Assigned Beats
-                </th>
-                <th style={{ padding: "14px 18px", fontSize: "0.75rem", fontWeight: "700", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
-                  Status
-                </th>
-                {canModify && (
-                  <th style={{ padding: "14px 18px", fontSize: "0.75rem", fontWeight: "700", color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.05em", textAlign: "right" }}>
-                    Actions
-                  </th>
-                )}
-              </tr>
-            </thead>
+              )}
+            </tr>
+          </thead>
             <tbody>
               {loading ? (
                 <tr>
@@ -281,7 +275,7 @@ export default function SalesmanList({
                     }}
                   >
                     {/* Code & Emp */}
-                    <td style={{ padding: "16px 18px" }}>
+                    <td style={{ padding: "11px 14px", whiteSpace: "nowrap" }}>
                       <div style={{ fontSize: "0.875rem", fontFamily: "monospace", fontWeight: "700", color: "var(--primary-400)" }}>
                         {sm.salesmanCode}
                       </div>
@@ -291,7 +285,7 @@ export default function SalesmanList({
                     </td>
 
                     {/* Name */}
-                    <td style={{ padding: "16px 18px" }}>
+                    <td style={{ padding: "11px 14px" }}>
                       <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
                         <div style={{
                           width: "36px",
@@ -331,7 +325,7 @@ export default function SalesmanList({
                     </td>
 
                     {/* Contact */}
-                    <td style={{ padding: "16px 18px" }}>
+                    <td style={{ padding: "11px 14px" }}>
                       <div style={{ display: "flex", flexDirection: "column", gap: "4px", fontSize: "0.8rem", color: "var(--text-muted)" }}>
                         <div style={{ display: "flex", alignItems: "center", gap: "6px", color: "var(--text-main)" }}>
                           <Phone size={13} style={{ color: "var(--primary-400)" }} />
@@ -347,7 +341,7 @@ export default function SalesmanList({
                     </td>
 
                     {/* Assigned Beats */}
-                    <td style={{ padding: "16px 18px" }}>
+                    <td style={{ padding: "11px 14px" }}>
                       {sm.assignedRoutes && sm.assignedRoutes.length > 0 ? (
                         <div style={{ display: "flex", flexWrap: "wrap", gap: "6px", maxWidth: "240px" }}>
                           {sm.assignedRoutes.map((rt) => (
@@ -378,7 +372,7 @@ export default function SalesmanList({
                     </td>
 
                     {/* Status */}
-                    <td style={{ padding: "16px 18px" }}>
+                    <td style={{ padding: "11px 14px" }}>
                       <span style={{
                         display: "inline-flex",
                         alignItems: "center",
@@ -403,7 +397,7 @@ export default function SalesmanList({
 
                     {/* Actions */}
                     {canModify && (
-                      <td style={{ padding: "16px 18px", textAlign: "right" }}>
+                      <td style={{ padding: "11px 14px", textAlign: "right", whiteSpace: "nowrap" }}>
                         <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: "8px" }}>
                           <button
                             onClick={() => onOpenRouteAssignModal(sm)}
@@ -528,6 +522,5 @@ export default function SalesmanList({
           </div>
         </div>
       </div>
-    </div>
   );
 }

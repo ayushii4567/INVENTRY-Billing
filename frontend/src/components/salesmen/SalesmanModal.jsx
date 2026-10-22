@@ -285,7 +285,7 @@ export default function SalesmanModal({ token, salesman = null, onClose, onSucce
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                placeholder="salesman@chirag.com"
+                placeholder="salesman@distributorerp.com"
                 style={{
                   width: "100%",
                   padding: "10px 14px",

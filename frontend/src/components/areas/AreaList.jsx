@@ -246,60 +246,53 @@ export default function AreaList({
         )}
 
         {!loading && !error && areas.length > 0 && (
-          <div style={{ overflowX: "auto" }}>
-            <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: "0.88rem" }}>
+          <div className="erp-table-container">
+            <table className="erp-table" style={{ minWidth: "800px" }}>
               <thead>
-                <tr style={{
-                  borderBottom: "1px solid var(--border-card)",
-                  background: "var(--table-header-bg)",
-                  color: "var(--text-muted)",
-                  fontSize: "0.75rem",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.05em"
-                }}>
-                  <th style={{ padding: "14px 20px" }}>Area Code</th>
-                  <th style={{ padding: "14px 20px" }}>Area Name</th>
-                  <th style={{ padding: "14px 20px" }}>Description</th>
-                  <th style={{ padding: "14px 20px", textAlign: "center" }}>Status</th>
-                  <th style={{ padding: "14px 20px", textAlign: "center" }}>Actions</th>
+                <tr>
+                  <th style={{ width: "120px", padding: "12px 14px" }}>Area Code</th>
+                  <th style={{ width: "220px", padding: "12px 14px" }}>Area Name</th>
+                  <th style={{ minWidth: "220px", padding: "12px 14px" }}>Description</th>
+                  <th style={{ width: "110px", padding: "12px 14px", textAlign: "center" }}>Status</th>
+                  <th style={{ width: "100px", padding: "12px 14px", textAlign: "center" }}>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {areas.map((a) => {
                   const isActive = a.status === "ACTIVE";
                   return (
-                    <tr key={a.id} className="table-row-hover" style={{ borderBottom: "1px solid var(--border-card)" }}>
-                      <td style={{ padding: "14px 20px", fontWeight: "700", color: "var(--primary-400)" }}>
+                    <tr key={a.id} className="table-row-hover">
+                      <td style={{ padding: "11px 14px", fontWeight: "700", color: "var(--primary-400)", whiteSpace: "nowrap" }}>
                         <span style={{
                           background: "var(--badge-brand-bg)",
-                          padding: "4px 8px",
+                          padding: "3px 8px",
                           borderRadius: "6px",
                           fontSize: "0.78rem",
-                          fontFamily: "monospace"
+                          fontFamily: "var(--font-mono)"
                         }}>
                           {a.areaCode}
                         </span>
                       </td>
 
-                      <td style={{ padding: "14px 20px", fontWeight: "700", color: "var(--text-main)" }}>
+                      <td style={{ padding: "11px 14px", fontWeight: "600", color: "var(--text-main)", whiteSpace: "nowrap" }}>
                         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                          <MapPin size={16} color="var(--primary-400)" />
+                          <MapPin size={15} color="var(--primary-400)" />
                           <span>{a.areaName}</span>
                         </div>
                       </td>
 
-                      <td style={{ padding: "14px 20px", color: "var(--text-muted)", maxWidth: "360px" }}>
+                      <td style={{ padding: "11px 14px", color: "var(--text-muted)", fontSize: "0.82rem" }}>
                         {a.description || "—"}
                       </td>
 
-                      <td style={{ padding: "14px 20px", textAlign: "center" }}>
+                      <td style={{ padding: "11px 14px", textAlign: "center", whiteSpace: "nowrap" }}>
                         <span style={{
-                          background: isActive ? "rgba(16, 185, 129, 0.15)" : "rgba(239, 68, 68, 0.15)",
-                          color: isActive ? "#34d399" : "#f87171",
-                          border: `1px solid ${isActive ? "rgba(16, 185, 129, 0.3)" : "rgba(239, 68, 68, 0.3)"}`,
-                          padding: "3px 10px",
+                          background: isActive ? "rgba(16, 185, 129, 0.12)" : "rgba(239, 68, 68, 0.12)",
+                          color: isActive ? "#059669" : "#dc2626",
+                          border: `1px solid ${isActive ? "rgba(16, 185, 129, 0.25)" : "rgba(239, 68, 68, 0.25)"}`,
+                          padding: "3px 9px",
                           borderRadius: "20px",
-                          fontSize: "0.75rem",
+                          fontSize: "0.73rem",
                           fontWeight: "700",
                           display: "inline-flex",
                           alignItems: "center",
@@ -310,7 +303,7 @@ export default function AreaList({
                         </span>
                       </td>
 
-                      <td style={{ padding: "14px 20px", textAlign: "center" }}>
+                      <td style={{ padding: "11px 14px", textAlign: "center", whiteSpace: "nowrap" }}>
                         {canModify && (
                           <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "6px" }}>
                             <button
@@ -320,14 +313,14 @@ export default function AreaList({
                                 background: "var(--bg-input)",
                                 border: "1px solid var(--border-card)",
                                 color: "var(--text-muted)",
-                                padding: "6px",
-                                borderRadius: "8px",
+                                padding: "5px 8px",
+                                borderRadius: "7px",
                                 cursor: "pointer",
                                 display: "flex",
                                 alignItems: "center"
                               }}
                             >
-                              <Edit3 size={15} />
+                              <Edit3 size={14} />
                             </button>
 
                             <button
@@ -336,15 +329,15 @@ export default function AreaList({
                               style={{
                                 background: "var(--bg-input)",
                                 border: "1px solid var(--border-card)",
-                                color: isActive ? "#f87171" : "#34d399",
-                                padding: "6px",
-                                borderRadius: "8px",
+                                color: isActive ? "#f87171" : "#059669",
+                                padding: "5px 8px",
+                                borderRadius: "7px",
                                 cursor: "pointer",
                                 display: "flex",
                                 alignItems: "center"
                               }}
                             >
-                              {isActive ? <ToggleRight size={16} /> : <ToggleLeft size={16} />}
+                              {isActive ? <ToggleRight size={15} /> : <ToggleLeft size={15} />}
                             </button>
                           </div>
                         )}

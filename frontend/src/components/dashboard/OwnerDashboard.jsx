@@ -39,12 +39,97 @@ import ExceptionDetails from "../exceptions/ExceptionDetails";
 import ApprovalDashboard from "../approvals/ApprovalDashboard";
 import ApprovalDetails from "../approvals/ApprovalDetails";
 import ExecutiveReports from "../reports/ExecutiveReports";
+import DayBookView from "../reports/DayBookView";
+import TrialBalanceView from "../reports/TrialBalanceView";
+import ProfitLossView from "../reports/ProfitLossView";
+import BalanceSheetView from "../reports/BalanceSheetView";
+import InventoryDashboard from "../inventory/InventoryDashboard";
+import DeliveryDashboard from "../delivery/DeliveryDashboard";
 import SchemeList from "../schemes/SchemeList";
+import SupplierList from "../suppliers/SupplierList";
+import PurchaseList from "../purchases/PurchaseList";
+import PartyLedger from "../ledger/PartyLedger";
 import DemoGuide from "../demo/DemoGuide";
+import SettingsView from "../settings/SettingsView";
 import { AlertCircle, RefreshCw, Layers, Sparkles } from "lucide-react";
 
+const VALID_TABS = [
+  "overview",
+  "sales-customers",
+  "sales-products",
+  "sales-areas",
+  "sales-routes",
+  "sales-salesmen",
+  "sales-assignments",
+  "sales-orders",
+  "sales-bills",
+  "col-payments",
+  "supplier-payments",
+  "col-unmatched",
+  "col-upi",
+  "col-cash",
+  "col-cheques",
+  "col-recon",
+  "inventory",
+  "delivery",
+  "daybook",
+  "trial-balance",
+  "profit-loss",
+  "balance-sheet",
+  "settings",
+  "exceptions",
+  "approvals",
+  "suppliers",
+  "purchases",
+  "ledger",
+  "reports",
+  "sales-schemes",
+  "demo-guide"
+];
+
+const getInitialActiveTab = () => {
+  try {
+    const hash = window.location.hash.replace(/^#\/?/, "").trim();
+    if (hash && VALID_TABS.includes(hash)) {
+      return hash;
+    }
+    const saved = localStorage.getItem("erp_active_tab");
+    if (saved && VALID_TABS.includes(saved)) {
+      return saved;
+    }
+  } catch (err) {
+    console.warn("Could not read initial active tab:", err);
+  }
+  return "overview";
+};
+
 export default function OwnerDashboard({ user, onLogout, token }) {
-  const [activeTab, setActiveTab] = useState("overview");
+  const [activeTab, setActiveTab] = useState(getInitialActiveTab);
+
+  // Synchronize activeTab with URL hash and localStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem("erp_active_tab", activeTab);
+      const currentHash = window.location.hash.replace(/^#\/?/, "").trim();
+      if (currentHash !== activeTab) {
+        window.history.replaceState(null, "", `#${activeTab}`);
+      }
+    } catch (e) {
+      console.warn("Could not sync active tab to URL:", e);
+    }
+  }, [activeTab]);
+
+  // Listen for browser Back / Forward or hash change
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.replace(/^#\/?/, "").trim();
+      if (hash && VALID_TABS.includes(hash) && hash !== activeTab) {
+        setActiveTab(hash);
+      }
+    };
+    window.addEventListener("hashchange", handleHashChange);
+    return () => window.removeEventListener("hashchange", handleHashChange);
+  }, [activeTab]);
   const [searchQuery, setSearchQuery] = useState("");
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -93,6 +178,10 @@ export default function OwnerDashboard({ user, onLogout, token }) {
   // Step 11: Exception & Approval state
   const [selectedException, setSelectedException] = useState(null);
   const [selectedApproval, setSelectedApproval] = useState(null);
+
+  // Suppliers, Purchases & Ledger state
+  const [selectedSupplierForPurchase, setSelectedSupplierForPurchase] = useState(null);
+  const [ledgerTarget, setLedgerTarget] = useState(null);
 
   const [toastMessage, setToastMessage] = useState("");
 
@@ -203,15 +292,64 @@ export default function OwnerDashboard({ user, onLogout, token }) {
     fetchDashboardData();
   }, [token]);
 
+  // Tally Keyboard Shortcut Integration: F8 (Sales), F9 (Purchases), F4 (Ledger)
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      const tag = document.activeElement?.tagName?.toLowerCase();
+      const isInput = tag === "input" || tag === "textarea" || tag === "select";
+
+      if (e.ctrlKey && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        const searchInput = document.querySelector('input[type="text"], input[type="search"]');
+        if (searchInput) searchInput.focus();
+        return;
+      }
+
+      if (e.key === "F8") {
+        e.preventDefault();
+        setActiveTab("sales-bills");
+        showToast("Switched to Sales Invoices & Billing (F8)");
+      } else if (e.key === "F9") {
+        e.preventDefault();
+        setActiveTab("purchases");
+        showToast("Switched to Purchase Inward Voucher (F9)");
+      } else if (e.key === "F4" && !isInput) {
+        e.preventDefault();
+        setActiveTab("ledger");
+        showToast("Switched to Party Ledger / Statement of Accounts (F4)");
+      } else if (e.key === "F6" && !isInput) {
+        e.preventDefault();
+        setActiveTab("col-payments");
+        showToast("Switched to Collections / Receipts Voucher (F6)");
+      } else if (e.key === "F7" && !isInput) {
+        e.preventDefault();
+        setActiveTab("daybook");
+        showToast("Switched to Accounting Day Book (F7)");
+      } else if (e.key === "F5" && !isInput) {
+        e.preventDefault();
+        setActiveTab("supplier-payments");
+        showToast("Switched to Supplier Payment Voucher (F5)");
+      } else if (e.altKey && e.key === "F5") {
+        e.preventDefault();
+        setActiveTab("supplier-payments");
+        showToast("Switched to Supplier Payment Voucher (Alt+F5)");
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
   const showToast = (msg) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(""), 4000);
   };
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh", background: "var(--bg-dark)" }}>
+    <div style={{ display: "flex", height: "100vh", width: "100vw", overflow: "hidden", background: "var(--bg-dark)" }}>
       {/* Unified Owner Sidebar */}
       <Sidebar 
+        user={user}
         activeTab={activeTab} 
         onTabSelect={(tab) => {
           setActiveTab(tab);
@@ -222,15 +360,13 @@ export default function OwnerDashboard({ user, onLogout, token }) {
           setSelectedException(null);
           setSelectedApproval(null);
         }} 
-        exceptionCount={dashboardData?.exceptions?.length || 10}
-        approvalCount={4}
         onLogout={onLogout}
         isOpen={isMobileSidebarOpen}
         onClose={() => setIsMobileSidebarOpen(false)}
       />
 
       {/* Main Content Area */}
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0 }}>
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", height: "100vh", minWidth: 0, overflow: "hidden" }}>
         
         {/* Owner Header */}
         <Header 
@@ -239,6 +375,8 @@ export default function OwnerDashboard({ user, onLogout, token }) {
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
           onToggleSidebar={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
+          activeTab={activeTab}
+          onNavigateTab={(tab) => setActiveTab(tab)}
         />
 
         {/* Toast Feedback Banner */}
@@ -260,8 +398,17 @@ export default function OwnerDashboard({ user, onLogout, token }) {
           </div>
         )}
 
-        {/* Dashboard Body */}
-        <main className="dashboard-main-content">
+        {/* Dashboard Body - Isolated Scroll Pane */}
+        <main 
+          className="dashboard-main-content"
+          style={{
+            flex: 1,
+            overflowY: "auto",
+            overflowX: "hidden",
+            padding: "24px",
+            minHeight: 0
+          }}
+        >
           
           {/* CUSTOMER MASTER VIEW */}
           {activeTab === "sales-customers" ? (
@@ -448,8 +595,8 @@ export default function OwnerDashboard({ user, onLogout, token }) {
                 }}
               />
             )
-          ) : activeTab === "col-payments" ? (
-            /* STEP 8: PAYMENT COLLECTIONS REGISTER */
+          ) : activeTab === "col-payments" || activeTab === "supplier-payments" ? (
+            /* STEP 8: PAYMENT COLLECTIONS & SUPPLIER VOUCHERS */
             selectedPayment ? (
               <PaymentDetails
                 payment={selectedPayment}
@@ -469,6 +616,7 @@ export default function OwnerDashboard({ user, onLogout, token }) {
               <PaymentList
                 token={token}
                 user={user}
+                initialPaymentType={activeTab === "supplier-payments" ? "SUPPLIER_PAYMENT" : "ALL"}
                 onSelectPayment={(p) => setSelectedPayment(p)}
               />
             )
@@ -555,6 +703,61 @@ export default function OwnerDashboard({ user, onLogout, token }) {
                 onSelectApproval={(apr) => setSelectedApproval(apr)}
               />
             )
+          ) : activeTab === "suppliers" ? (
+            /* TALLY SUNDRY CREDITORS (SUPPLIERS MASTER) */
+            <SupplierList
+              token={token}
+              onCreatePurchaseForSupplier={(sup) => {
+                setSelectedSupplierForPurchase(sup);
+                setActiveTab("purchases");
+              }}
+              onViewSupplierLedger={(sup) => {
+                setLedgerTarget({ type: "SUPPLIER", id: sup.id || sup._id });
+                setActiveTab("ledger");
+              }}
+            />
+          ) : activeTab === "purchases" ? (
+            /* TALLY F9 INWARD PURCHASE VOUCHERS */
+            <PurchaseList
+              token={token}
+              initialSupplier={selectedSupplierForPurchase}
+            />
+          ) : activeTab === "ledger" ? (
+            /* TALLY STATEMENT OF ACCOUNTS & PARTY LEDGER */
+            <PartyLedger
+              token={token}
+              initialPartyType={ledgerTarget?.type || "CUSTOMER"}
+              initialPartyId={ledgerTarget?.id || null}
+            />
+          ) : activeTab === "inventory" ? (
+            /* WAREHOUSE INVENTORY & STOCK MOVEMENTS */
+            <InventoryDashboard
+              token={token}
+              user={user}
+              onSelectProduct={() => setActiveTab("sales-products")}
+              onViewAllStock={() => setActiveTab("sales-products")}
+              onViewMovements={() => {}}
+            />
+          ) : activeTab === "delivery" ? (
+            /* DELIVERY FLEET & RUNSHEET DISPATCH */
+            <DeliveryDashboard
+              token={token}
+              user={user}
+              onNavigate={(t) => setActiveTab(t)}
+              onSelectTrip={() => {}}
+            />
+          ) : activeTab === "daybook" ? (
+            /* TALLY DAY BOOK (DAILY TRANSACTION AUDIT) */
+            <DayBookView token={token} />
+          ) : activeTab === "trial-balance" ? (
+            /* TALLY TRIAL BALANCE (BALANCED STATEMENT) */
+            <TrialBalanceView token={token} />
+          ) : activeTab === "profit-loss" ? (
+            /* TALLY PROFIT & LOSS ACCOUNT */
+            <ProfitLossView token={token} />
+          ) : activeTab === "balance-sheet" ? (
+            /* TALLY BALANCE SHEET */
+            <BalanceSheetView token={token} />
           ) : activeTab === "reports" ? (
             /* STEP 12: EXECUTIVE REPORTS & BUSINESS ANALYTICS */
             <ExecutiveReports
@@ -562,6 +765,9 @@ export default function OwnerDashboard({ user, onLogout, token }) {
               user={user}
               onNavigateTab={(tab) => setActiveTab(tab)}
             />
+          ) : activeTab === "settings" ? (
+            /* ERP & ACCOUNTING SETTINGS */
+            <SettingsView token={token} user={user} />
           ) : activeTab === "sales-schemes" ? (
             /* STEP 13: FMCG SCHEMES & TRADE PROMOTIONS MASTER */
             <SchemeList token={token} userRole={user.role} />
@@ -653,31 +859,11 @@ export default function OwnerDashboard({ user, onLogout, token }) {
                         Owner Command Center
                       </h1>
                       <p style={{ color: "var(--text-muted)", fontSize: "0.9rem" }}>
-                        Real-time operational & financial control center for <strong style={{ color: "var(--text-main)" }}>Chirag Combines FMCG</strong>
+                        Real-time operational & financial control center for <strong style={{ color: "var(--text-main)" }}>Distributor ERP</strong>
                       </p>
                     </div>
 
                     <div style={{ display: "flex", alignItems: "center", gap: "16px", flexWrap: "wrap" }}>
-                      <button
-                        onClick={() => setActiveTab("demo-guide")}
-                        style={{
-                          background: "linear-gradient(135deg, rgba(99, 102, 241, 0.25) 0%, rgba(139, 92, 246, 0.2) 100%)",
-                          border: "1px solid rgba(99, 102, 241, 0.4)",
-                          color: "#818cf8",
-                          borderRadius: "14px",
-                          padding: "12px 18px",
-                          fontWeight: "800",
-                          fontSize: "0.85rem",
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "8px",
-                          cursor: "pointer",
-                          boxShadow: "0 4px 14px rgba(99, 102, 241, 0.25)"
-                        }}
-                      >
-                        <Sparkles size={16} />
-                        <span>Interactive Demo Guide</span>
-                      </button>
 
                       <div style={{
                         background: "var(--bg-input)",
@@ -716,17 +902,6 @@ export default function OwnerDashboard({ user, onLogout, token }) {
 
                   {/* 6 Core KPI Grid Cards */}
                   <KpiGrid summary={dashboardData?.summary || {}} />
-
-                  {/* Actionable Exception Control Center */}
-                  <ExceptionPanel 
-                    exceptions={dashboardData?.exceptions || []} 
-                    onSelectException={(exc) => {
-                      console.log("Selected exception:", exc);
-                      setActiveTab("exceptions");
-                      setSelectedException(exc);
-                      showToast(`Navigated to Exception: ${exc.title}`);
-                    }}
-                  />
 
                   {/* Sales Chart & Collection Breakdown Grid */}
                   <div className="responsive-split-grid">
